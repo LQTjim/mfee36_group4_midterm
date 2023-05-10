@@ -1,0 +1,13 @@
+.login-background {
+  background-image: url("./../assets/img/login.jpg");
+  filter: grayscale(100%) blur(3px);
+}
+.login-title {
+  color: rgb(99, 18, 128);
+}
+.login-input {
+  color: red !important;
+}
+.login-input:focus {
+  color: red !important;
+}
