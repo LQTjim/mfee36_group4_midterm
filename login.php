@@ -1,4 +1,10 @@
 <?php include './parts/html-head.php' ?>
+<?php require './parts/db-connect.php';
+if (isset($_SESSION['admin'])) {
+    header('Location: index.php');
+    exit;
+} #有登入就導回到首頁
+?>
 <link rel="stylesheet" href="./css/login.css">
 <div class="position-fixed top-0 start-0 end-0 bottom-0 login-background"></div>
 <section class="h-100">
@@ -11,7 +17,7 @@
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
                         <h1 class="fs-4 card-title fw-bold mb-4 text-center login-title">G4後台登入</h1>
-                        <form method="POST" class="needs-validation login-form" novalidate="" autocomplete="off">
+                        <form class="needs-validation login-form" novalidate="" name="login" onsubmit="forSubmit(event)">
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="email">E-mail</label>
                                 <input id="email" type="text" class="login-input form-control" name="email" value="" autofocus autocomplete="off">
@@ -45,6 +51,20 @@
 </section>
 <?php include './parts/html-scripts.php' ?>
 <script>
-    document.querySelector('')
+    async function forSubmit(e) {
+        e.preventDefault();
+        const fd = new FormData(document.login)
+        try {
+            const res = await fetch("./api/login-api.php", {
+                method: "POST",
+                body: fd,
+                // Content-Type 可省略, 當傳進去的是FormData 自動辨別為multipart/form-data 
+            });
+            const obj = await res.json();
+            console.log(obj);
+        } catch (err) {
+            console.log(err)
+        }
+    }
 </script>
 <?php include './parts/html-footer.php' ?>
