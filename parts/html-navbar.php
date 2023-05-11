@@ -48,7 +48,7 @@ if (!isset($pageName)) {
         </a>
       </div>
     </div>
-
+    <div class="mt-auto text-end pe-4 pb-4"><a class="btn btn-primary" href="./api/logout-api.php" role="button">登出</a></div>
 
   </aside>
   <main class="main">

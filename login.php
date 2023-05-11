@@ -51,6 +51,7 @@ if (isset($_SESSION['admin'])) {
 </section>
 <?php include './parts/html-scripts.php' ?>
 <script>
+    console.log(window.Swal)
     async function forSubmit(e) {
         e.preventDefault();
         const fd = new FormData(document.login)
@@ -61,7 +62,21 @@ if (isset($_SESSION['admin'])) {
                 // Content-Type 可省略, 當傳進去的是FormData 自動辨別為multipart/form-data 
             });
             const obj = await res.json();
-            console.log(obj);
+            if (obj.success === true) {
+                // 登入成功->顯示登入成功->sleep(1秒)->跳轉
+                Swal.fire({
+                    text: '登入成功',
+                    icon: 'success',
+                    showCancelButton: false,
+                    showConfirmButton: false
+                })
+                setTimeout(() => {
+                    location.href = "index.php"
+                }, 1000)
+            } else {
+                console.log(obj.error[0])
+                //登入失敗->顯示可自己按關閉的提示訊息 ->確認後回到PANEL
+            }
         } catch (err) {
             console.log(err)
         }

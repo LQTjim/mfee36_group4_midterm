@@ -1,3 +1,4 @@
+/* font-family: 'Noto Sans TC', sans-serif; */
 .login-background {
   background-image: url("./../assets/img/login.jpg");
   filter: grayscale(100%) blur(3px);
@@ -10,4 +11,9 @@
 }
 .login-input:focus {
   color: red !important;
+}
+#swal2-html-container {
+  font-family: "Noto Sans TC", sans-serif;
+  font-weight: 900;
+  font-size: 36px;
 }
