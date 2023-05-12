@@ -1,5 +1,6 @@
 <?php
 $pageName = 'member';
+$title = '會員列表';
 include './parts/html-head.php';
 include './parts/html-navbar.php';
 include './parts/db-connect.php'; ?>
@@ -28,6 +29,17 @@ $rows = $pdo->query($sql)->fetchAll();
 
 ?>
 <div class="card shadow-sm">
+    <div class="card-footer bg-transparent py-3">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end mb-0">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
     <div class="card-header bg-transparent">
         <div class="input-group">
             <div class="dropdown">
