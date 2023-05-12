@@ -24,10 +24,9 @@ if (!isset($pageName)) {
         <a data-bs-toggle="collapse" class="sidebar-link <?= $pageName === 'member' ? 'active' : '' ?>" href="#menu-member" role="button">
           <div class="d-flex justify-content-between px-4">
             <p class="mb-0">
-              <i class="bi bi-card-checklist me-2"></i>
               會員管理
             </p>
-            <i class="bi bi-caret-down"></i>
+            <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
         <div class="collapse" id="menu-member" role="button">
@@ -42,7 +41,6 @@ if (!isset($pageName)) {
       <div><!-- 不包含子選單 -->
         <a class="sidebar-link" href="/" role="button">
           <div class="px-4">
-            <i class="bi bi-list-stars me-2"></i>
             參考連結
           </div>
         </a>
