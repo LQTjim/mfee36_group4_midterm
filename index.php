@@ -4,6 +4,7 @@ $pageName = 'homepage';
 include './parts/html-head.php';
 include './parts/html-navbar.php'; ?>
 <div>首頁內容</div>
+<div>test git for sean</div>
 <?php include './parts/html-navbar-end.php'; ?>
 <?php
 include './parts/html-scripts.php';
