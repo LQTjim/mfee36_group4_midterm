@@ -1,4 +1,9 @@
 /* font-family: 'Noto Sans TC', sans-serif; */
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
 .login-background {
   background-image: url("./../assets/img/login.jpg");
   filter: grayscale(100%) blur(3px);
@@ -7,13 +12,36 @@
   color: rgb(99, 18, 128);
 }
 .login-input {
-  color: red !important;
+  color: rgb(99, 18, 128) !important;
 }
 .login-input:focus {
-  color: red !important;
+  color: rgb(99, 18, 128) !important;
+}
+.login-input.error-on {
+  /* background-color: rgb(179, 32, 32); */
+  color: rgb(255, 0, 0);
+  border-color: rgb(179, 32, 32);
+  box-shadow: 0 0 0 0.25rem rgba(255, 0, 0, 0.25);
 }
 #swal2-html-container {
   font-family: "Noto Sans TC", sans-serif;
   font-weight: 900;
   font-size: 36px;
+}
+[data-error] {
+  color: red;
+  font-size: 18px;
+  transition: all 0.5s ease;
+  opacity: 0;
+}
+[data-error].error-on {
+  opacity: 1;
+}
+/* .login-input.error-on {
+  box-shadow: 0 0 0 0.25rem rgba(216, 43, 43, 0.25);
+  border-color: rgba(216, 43, 43, 0.25);
+} */
+
+[data-login-btn]:first-child:active {
+  background-color: rgb(99, 18, 128);
 }

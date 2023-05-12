@@ -17,25 +17,19 @@ if (isset($_SESSION['admin'])) {
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
                         <h1 class="fs-4 card-title fw-bold mb-4 text-center login-title">G4後台登入</h1>
-                        <form class="needs-validation login-form" novalidate="" name="login" onsubmit="forSubmit(event)">
+                        <form class="needs-validation login-form" novalidate="" name="login">
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="email">E-mail</label>
                                 <input id="email" type="text" class="login-input form-control" name="email" value="" autofocus autocomplete="off">
-                                <div class="invalid-feedback">
-                                    Email格式錯誤
-                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="password">密碼</label>
                                 <input id="password" type="password" class="login-input form-control" name="password" autocomplete="off">
-                                <div class="invalid-feedback">
-                                    密碼錯誤
-                                </div>
                             </div>
-
+                            <div class="mb-3" data-error></div>
                             <div class=" d-flex align-items-center justify-content-center">
-                                <button type="submit" class="btn btn-primary w-50">
+                                <button type="button" data-login-btn class="btn btn-primary w-50">
                                     登入
                                 </button>
                             </div>
@@ -51,35 +45,57 @@ if (isset($_SESSION['admin'])) {
 </section>
 <?php include './parts/html-scripts.php' ?>
 <script>
-    console.log(window.Swal)
-    async function forSubmit(e) {
-        e.preventDefault();
-        const fd = new FormData(document.login)
-        try {
-            const res = await fetch("./api/login-api.php", {
-                method: "POST",
-                body: fd,
-                // Content-Type 可省略, 當傳進去的是FormData 自動辨別為multipart/form-data 
-            });
-            const obj = await res.json();
-            if (obj.success === true) {
-                // 登入成功->顯示登入成功->sleep(1秒)->跳轉
-                Swal.fire({
-                    text: '登入成功',
-                    icon: 'success',
-                    showCancelButton: false,
-                    showConfirmButton: false
-                })
-                setTimeout(() => {
-                    location.href = "index.php"
-                }, 1000)
-            } else {
-                console.log(obj.error[0])
-                //登入失敗->顯示可自己按關閉的提示訊息 ->確認後回到PANEL
+    (function() {
+        const loginBtn = document.querySelector("[data-login-btn]")
+        const inputs = document.querySelectorAll('.login-input');
+        const errorDiv = document.querySelector('[data-error]');
+        inputs.forEach((el) => {
+            el.addEventListener('input', () => {
+                // errorDiv.remove("error-on")
+                el.classList.remove("error-on")
+            })
+        })
+        inputs.forEach((el) => {
+            el.addEventListener('click', () => {
+                errorDiv.remove("error-on")
+                el.classList.remove("error-on")
+            })
+        })
+        loginBtn.addEventListener('click', forSubmit)
+        async function forSubmit(e) {
+            e.preventDefault();
+            const fd = new FormData(document.login)
+            try {
+                const res = await fetch("./api/login-api.php", {
+                    method: "POST",
+                    body: fd,
+                    // Content-Type 可省略, 當傳進去的是FormData 自動辨別為multipart/form-data 
+                });
+                const obj = await res.json();
+                if (obj.success === true) {
+                    // 登入成功->顯示登入成功->sleep(1秒)->跳轉
+                    Swal.fire({
+                        text: '登入成功',
+                        icon: 'success',
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    })
+                    setTimeout(() => {
+                        location.href = "index.php"
+                    }, 1000)
+                } else {
+                    // console.log(obj.error[0])
+                    //登入失敗->顯示可自己按關閉的提示訊息 ->確認後回到PANEL
+
+
+                    errorDiv.innerHTML = `${obj.error[0]}`
+                    errorDiv.classList.add('error-on')
+                    inputs.forEach((el) => el.classList.add('error-on'))
+                }
+            } catch (err) {
+                console.log(err)
             }
-        } catch (err) {
-            console.log(err)
         }
-    }
+    })()
 </script>
 <?php include './parts/html-footer.php' ?>
