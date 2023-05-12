@@ -1,5 +1,5 @@
 <?php
-// include './parts/admin-required.php';
+include './parts/admin-required.php';
 $pageName = 'Blogs';
 include './parts/html-head.php';
 include './parts/html-navbar.php'; ?>
