@@ -40,6 +40,32 @@ include './parts/admin-required.php';
           </a>
         </div>
       </div>
+      <div><!-- 包含子選項 -->
+        <?php $c_l_pages = ['Lessions', 'Coachs', 'Blogs', 'Details Management'] ?>
+        <a data-bs-toggle="collapse" class="sidebar-link <?= in_array($pageName, $c_l_pages) ? 'active' : '' ?>" href="#coach-lession" role="button">
+          <div class="d-flex justify-content-between px-4">
+            <p class="mb-0">
+              <i class="bi bi-card-checklist me-2"></i>
+              教練與課程系統
+            </p>
+            <i class="bi bi-caret-down"></i>
+          </div>
+        </a>
+        <div class="collapse" id="coach-lession" role="button">
+          <a href="./coach_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            教練列表
+          </a>
+          <a href="./lession_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            課程列表
+          </a>
+          <a href="./blog_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            部落格列表
+          </a>
+          <a href="./details_manage.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            細項管理
+          </a>
+        </div>
+      </div>
       <div><!-- 不包含子選單 -->
         <a class="sidebar-link" href="/" role="button">
           <div class="px-4">
