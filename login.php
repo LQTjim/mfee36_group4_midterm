@@ -72,6 +72,7 @@ if (isset($_SESSION['admin'])) {
                     // Content-Type 可省略, 當傳進去的是FormData 自動辨別為multipart/form-data 
                 });
                 const obj = await res.json();
+                console.log(obj)
                 if (obj.success === true) {
                     // 登入成功->顯示登入成功->sleep(1秒)->跳轉
                     Swal.fire({
