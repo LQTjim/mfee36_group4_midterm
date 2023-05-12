@@ -31,7 +31,7 @@ JOIN `member_sex` ms ON m.sex_sid=ms.sid
 ORDER BY rc.record_time DESC";
 
 $rows = $pdo->query($sql)->fetchAll();
-
+123;
 print_r($rows);
 exit;
 
