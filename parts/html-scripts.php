@@ -9,7 +9,6 @@
             } else {
                 i.className = "fa-solid fa-caret-up"
             }
-
         })
     })
 

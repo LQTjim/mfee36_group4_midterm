@@ -1,7 +1,9 @@
 <?php
 if (!isset($pageName)) {
   $pageName = '';
-} ?>
+}
+include './parts/admin-required.php';
+?>
 
 <div class="d-flex ">
   <aside class="sidebar vh-100 border-end pt-3 d-flex bg-white flex-column">
