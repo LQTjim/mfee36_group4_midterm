@@ -124,6 +124,9 @@
                 showConfirmButton: false,
                 timer: 1000
             })
+
+            data.success && setTimeout(() => window.location.reload(), 1000)
+
         } catch (err) {
             console.log(err)
         }
