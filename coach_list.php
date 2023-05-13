@@ -58,6 +58,15 @@
         font-style: oblique;
     }
 
+    .c_l_spinner {
+        width: 5rem !important;
+        height: 5rem !important;
+    }
+
+    .c_l_progressBar {
+        height: 1rem;
+    }
+
 </style>
 
 <?php
@@ -76,7 +85,7 @@
             <div class="col-md-2 img-box">
                 <img src="<?= $row['photo'] ?>" class="img-fluid rounded" alt="...">
                 <i class="fa-solid fa-pen-to-square edit-img" onclick="document.getElementById('photo_<?= $row['sid'] ?>').click()"></i>
-                <input type="file" accept="image/*" id="photo_<?= $row['sid'] ?>" onchange="edit({
+                <input type="file" accept="image/png, image/jpeg, image/webp" id="photo_<?= $row['sid'] ?>" onchange="edit({
                     'sid': <?= $row['sid'] ?>,
                     'type': 'photo',
                     'data': this.files[0]
@@ -96,18 +105,29 @@
 
 </div>
 
-
 <script>
 
     async function edit(obj) {
 
+        Swal.fire({
+            titleText: 'Hold on ...',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            customClass: {
+                loader: 'c_l_spinner'
+            },
+            willOpen: () => Swal.showLoading()
+        })
+
         const formdata = new FormData()
 
-        for(let key in obj){
+        for(let key in obj) {
             formdata.append(key, obj[key])
         }
 
         try {
+
             const response = await fetch("./api/c_l_handle_edit.php", {
                 method: "POST",
                 body: formdata,
@@ -116,14 +136,19 @@
             const data = await response.json()
 
             Swal.fire({
-                text: data.success ? 'Edit Success' : 'Data not modified',
+                titleText: data.success ? 'Edit Success' : 'Data not modified',
                 icon: data.success ? 'success' : 'error',
                 showCancelButton: false,
                 showConfirmButton: false,
-                timer: 1000
+                timer: 1000,
+                timerProgressBar: true,
+                customClass: {
+                    timerProgressBar: 'c_l_progressBar'
+                },
+                didClose: () => {
+                    data.success && window.location.reload()
+                }
             })
-
-            data.success && setTimeout(() => window.location.reload(), 1000)
 
         } catch (err) {
             console.log(err)
