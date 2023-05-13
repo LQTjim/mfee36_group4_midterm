@@ -35,6 +35,9 @@ if (!empty($_POST['email']) and !empty($_POST['password'])) {
             $output['error'][0] = '您的密碼錯誤';
         }
     }
+} else {
+    $output['code'] = 500;
+    $output['error'][0] = '未知的錯誤，請聯絡服務人員';
 }
 
 header('Content-Type: application/json');
