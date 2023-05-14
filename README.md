@@ -4,7 +4,8 @@
 
 # 資料夾說明
 
-純 api 請放到 api 資料
+純 api 請放到 `./api`
+存成路徑的圖片請放到`./imgs`
 
 ---
 
@@ -14,8 +15,8 @@
 
 LQT
 
-- [ ] 登入頁面
-  - [ ] role=admin active=1 確認
+- [x] 登入頁面
+  - [x] role=admin active=1 確認
 - [ ] 會員管理
   - [ ] 瀏覽全部會員頁面
     - [ ] 用 Ajax 接資料
