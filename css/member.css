@@ -1,0 +1,13 @@
+/* for member_list.php */
+.member-list-table th {
+  white-space: nowrap;
+}
+.member-list-hero-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+.member-address,
+.member-created_at {
+  width: 150px;
+}

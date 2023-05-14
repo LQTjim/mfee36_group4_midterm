@@ -1,5 +1,7 @@
 <?php
 require './../parts/db-connect.php';
+
+//錯誤訊息、error code
 $output = [
     'success' => false,
     'postData' => $_POST,
