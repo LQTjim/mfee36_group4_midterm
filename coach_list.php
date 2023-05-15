@@ -15,7 +15,7 @@
     .c_li_container .card{
         padding: 20px;
         min-width: 200px;
-        height: 220px;
+        height: 250px;
     }
 
     @media (max-width: 767px) {
@@ -63,7 +63,7 @@
     }
 
     .c_l_progressBar {
-        height: 1rem;
+        height: .5rem;
     }
 
     /* style for Swal above*/
@@ -115,19 +115,37 @@
         overflow: hidden;
     }
 
+    .c_li_container .long_text:disabled {
+        background-color: transparent;
+    }
 
+    /* Modal style below*/
+    
+    dialog {
+        border-radius: 8px;
+        border: 0;
+    }
+    
+    /* Modal style above*/
 </style>
 
 <?php
 
-    $sql = "SELECT coach.*, member.name FROM `c_l_coach` AS coach JOIN `member` AS member WHERE coach.member_sid = member.sid" ;
+    $sql = "SELECT *, coach.sid FROM `c_l_coach` AS coach 
+            JOIN `member` AS member WHERE coach.member_sid = member.sid"
+    ;
+    
     $statment = $pdo->query($sql) ;
     $rows = $statment->fetchAll() ;
 
 ?>
 
-<div class="c_li_container container">
+<pre><?php
+    // print_r($rows) ;
+    // exit ;
+?></pre>
 
+<div class="c_li_container container">
     <?php foreach($rows as $row): ?>
     <div class="card mb-3">
         <div class="row g-0 h-100">
@@ -142,6 +160,33 @@
             </div>
             <div class="col-lg-10 col-md-9 col-sm-8">
                 <div class="card-body py-0">
+                    <span class="edit_field lh-lg mb-1 fw-bold d-flex justify-content-start">
+                        <span class="me-3">
+                            <label for="" class="me-1 fw-bold">教練編號:</label>
+                            <span class=""><?= $row['sid'] ?></span>
+                        </span>
+                        <span class="me-3">
+                            <label for="" class="me-1 fw-bold">會員編號:</label>
+                            <span class=""><?= $row['member_sid'] ?></span>
+                        </span>
+                        <span class="ms-auto">
+                            <label for="" class="me-1 fw-bold">加入時間:</label>
+                            <button class="edit_button" type="button" style="position:relative"
+                            onclick="
+                                const dateInput = this.querySelector('input');
+                                dateInput.showPicker();
+                            ">
+                                <span><?= explode(' ',$row['created_at'])[0] ?></span>
+                                <i class="fa-solid fa-pen-to-square ms-2"></i>
+                                <input type="date" style="visibility: hidden; position: absolute; left: -5rem;"
+                                onchange="edit({  
+                                    'sid': <?= $row['sid'] ?>,
+                                    'type': 'date',
+                                    'data': this.value
+                                })">
+                            </button>
+                        </span>
+                    </span>
                     <div class="coach_name_field">
                         <?php 
                             $list = ['name','nickname'] ;
@@ -168,56 +213,73 @@
                                     edit({  'sid': <?= $row['sid'] ?>,
                                             'type': '<?= $label ?>',
                                             'data': this.value
-                                    }); 
+                                    });
                                     this.blur();
                                 ">
                                 <i class="fa-solid fa-pen-to-square ms-1"></i>
                             </button>
                         </span>
                         <?php endforeach ; ?>
-
-                        <span class="edit_field ms-auto">
-                            <label for="" class="me-1 fw-bold">加入時間:</label>
-                            <button class="edit_button" type="button" onclick="">
-                                <span><?= explode(' ',$row['created_at'])[0] ?></span>
-                                <i class="fa-solid fa-pen-to-square ms-1"></i>
-                            </button>
-                            <input type="text" hidden>
-                        </span>
                     </div>
+                    <?php 
+                        $list = ['experience','introduction'] ;
+                        foreach($list as $label) :
+                    ?>
                     <div class="row edit_field">
-                        <div class="col-1 lh-lg fw-bold pe-0">經歷:</div>
-                        <div class="col-10 lh-lg hide_text"><?= $row['experience'] ?></div>
-                        <div class="col-1 text-end"><i class="fa-solid fa-pen-to-square ms-1"></i></div>
+                        <div class="col-1 lh-lg mb-1 fw-bold pe-0">
+                            <?= $label == 'experience' ? '經歷' : '介紹' ?>:
+                        </div>
+                        <input id="<?= $label ?>_<?= $row[$label] ?>" class="col-10 hide_text lh-base align-self-center border border-0" type="text" value="<?= $row[$label] ?>" onkeyup="
+                            if(event.which !== 13) return; 
+                            edit({  'sid': <?= $row['sid'] ?>,
+                                    'type': '<?= $label ?>',
+                                    'data': this.value
+                            });
+                            this.blur();
+                        ">
+                        <div class="col-1 text-end"><i class="fa-solid fa-pen-to-square ms-1" style="cursor: pointer" onclick="document.getElementById('<?= $label ?>_<?= $row[$label] ?>').focus()"></i></div>
                     </div>
-                    <div class="row edit_field">
-                        <div class="col-1 lh-lg fw-bold pe-0">介紹:</div>
-                        <div class="col-10 lh-lg hide_text"><?= $row['introduction'] ?></div>
-                        <div class="col-1 text-end"><i class="fa-solid fa-pen-to-square ms-1"></i></div>
+                    <?php endforeach ; ?>
+                    <div class="edit_field lh-lg mb-1">
+                        <button class="me-2 btn btn-primary" type="button" onclick="EditExpertise()">專項與證照
+                            <i class="fa-solid fa-pen-to-square ms-1"></i>
+                        </button>
+                        <button class="me-2 btn btn-secondary" type="button">課程列表
+                            <i class="fa-solid fa-pen-to-square ms-1"></i>
+                        </button>
+                        <button class="me-2 btn btn-secondary" type="button">文章列表
+                            <i class="fa-solid fa-pen-to-square ms-1"></i>
+                        </button>
+                        <button class="me-2 btn btn-dark" type="button">查看評論</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <?php endforeach ; ?>
-
 </div>
+
+<dialog id="certi_modal">
+    <div class="modal_monitor" style="height: 200px; width:400px; border:1px solid;"></div>
+    <button onclick="document.getElementById('certi_modal').close()">Close</button>
+</dialog>
 
 <script>
 
+    const LoadingModal = Swal.mixin({
+        titleText: '請稍候...',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        customClass: {
+            loader: 'c_l_spinner'
+        },
+        willOpen: () => Swal.showLoading()
+    })
+
     async function edit(obj) {
 
-        Swal.fire({
-            titleText: 'Hold on ...',
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            customClass: {
-                loader: 'c_l_spinner'
-            },
-            willOpen: () => Swal.showLoading()
-        })
+        LoadingModal.fire()
 
         const formdata = new FormData()
 
@@ -235,7 +297,7 @@
             const data = await response.json()
 
             Swal.fire({
-                titleText: data.success ? 'Edit Success' : 'Data not modified',
+                titleText: data.success ? '編輯成功' : '資料未修改',
                 icon: data.success ? 'success' : 'error',
                 showCancelButton: false,
                 showConfirmButton: false,
@@ -252,6 +314,21 @@
         } catch (err) {
             console.log(err)
         }
+    }
+
+    async function EditExpertise() {
+
+        // LoadingModal.fire()
+
+        return document.getElementById('certi_modal').showModal()
+
+        const response = await fetch("./api/c_l_get_certifications.php", {
+                method: "GET",
+        })
+
+        const data = await response.json()
+
+        // console.log(data)
     }
 
 </script>

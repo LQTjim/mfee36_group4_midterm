@@ -11,23 +11,40 @@
 
     $type_gate = [
         'photo' => 'EditPhoto',
-        'name' => 'EditName',
+        'name' => 'EditData',
+        'nickname' => 'EditData',
+        'date' => 'EditData',
+        'experience' => 'EditData',
+        'introduction' => 'EditData',
     ] ;
 
     if(empty($_POST['type'])) quit() ;
 
     $type_gate[$_POST['type']]() ;
 
-
-    function EditName() {
-        global $pdo, $output ;
+    function EditData() {
+        global $pdo, $output;
 
         if(empty($_POST['data'])) quit() ;
 
-        $sql = "UPDATE `member` SET `{$_POST['type']}` = '{$_POST['data']}' 
-                WHERE `sid` = ( SELECT `member_sid` FROM `c_l_coach` 
-                WHERE `sid` = {$_POST['sid']} )"
-        ;
+        $sql_gate = [
+            'name' => " UPDATE `member` SET `{$_POST['type']}` = '{$_POST['data']}' 
+                        WHERE `sid` = ( SELECT `member_sid` FROM `c_l_coach` 
+                        WHERE `sid` = {$_POST['sid']} ) ",
+
+            'nickname' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}' 
+                            WHERE `sid` = {$_POST['sid']} ",
+                            
+            'date' => " UPDATE `c_l_coach` SET `created_at` = '{$_POST['data']}'
+                        WHERE `sid` = {$_POST['sid']} ",
+
+            'experience' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}'
+                              WHERE `sid` = {$_POST['sid']} ",
+            'introduction' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}'
+                              WHERE `sid` = {$_POST['sid']} ",
+        ] ;
+
+        $sql = $sql_gate[$_POST['type']] ;
 
         $statment = $pdo->query($sql) ;
     
@@ -62,7 +79,8 @@
     }
 
     function saveImage() {
-        $file_extension = end(explode("/", $_FILES['data']['type'] )) ;
+        $tmp_array = explode("/", $_FILES['data']['type'] ) ;
+        $file_extension = end($tmp_array) ;
 
         $file_name = sha1( $_FILES['data']['name'] . uniqid() ) ;
         $save_path = "./imgs/coach_imgs/{$file_name}" ;
