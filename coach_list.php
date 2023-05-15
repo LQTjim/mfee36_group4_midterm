@@ -125,18 +125,54 @@
         border-radius: 8px;
         border: 0;
     }
+
+    .modal_monitor {
+        height: 180px;
+    }
     
+    .modal_body {
+        height: 150px;
+    }
+
+    .modal_monitor, .modal_body {
+        width: 50vw;
+        border: 3px solid grey;
+        padding: .5rem 0;
+        overflow-y: scroll;
+    }
+
+    .monitor_item {
+        padding: 0 .5rem;
+        text-align: center;
+        cursor: pointer;
+    }
+    
+    .monitor_item:hover {
+        background-color: lightskyblue;
+    }
+
     /* Modal style above*/
 </style>
 
 <?php
 
-    $sql = "SELECT *, coach.sid FROM `c_l_coach` AS coach 
-            JOIN `member` AS member WHERE coach.member_sid = member.sid"
+    $sql_all = "SELECT *, coach.sid, coach.created_at FROM `c_l_coach` AS coach 
+             JOIN `member` AS member WHERE coach.member_sid = member.sid"
+    ;
+
+    $stmt_all = $pdo->query($sql_all) ;
+    $rows_all = $stmt_all->fetchAll() ;
+
+    $u_id = isset($_GET['id']) ? $_GET['id'] : '' ;
+
+    $u_sql = isset($_GET['id']) ? 
+        "SELECT *, coach.sid, coach.created_at FROM `c_l_coach` AS coach 
+         JOIN `member` AS member ON coach.member_sid = member.sid
+         WHERE coach.sid = {$_GET['id']}" : $sql_all
     ;
     
-    $statment = $pdo->query($sql) ;
-    $rows = $statment->fetchAll() ;
+    $u_stmt = $pdo->query($u_sql) ;
+    $rows = $u_stmt->fetchAll() ;
 
 ?>
 
@@ -146,6 +182,17 @@
 ?></pre>
 
 <div class="c_li_container container">
+    <div class="d-flex justify-content-between mb-3">
+        <select class="form-select" style="width: 5rem;" onchange="
+            window.location.replace(`coach_list.php${this.value ? '?id=' : '' }${this.value}`);
+        ">
+            <option value="" <?= $u_id ? '' : 'selected' ?>>All</option>
+            <?php foreach($rows_all as $row): ?>
+                <option value="<?= $row['sid'] ?>" <?= $u_id == $row['sid'] ? 'selected' : '' ?> ><?= $row['sid'] ?></option>
+            <?php endforeach ; ?>
+        </select>
+        <button class="btn btn-primary" type="button">新增教練</button>
+    </div>
     <?php foreach($rows as $row): ?>
     <div class="card mb-3">
         <div class="row g-0 h-100">
@@ -176,6 +223,7 @@
                                 const dateInput = this.querySelector('input');
                                 dateInput.showPicker();
                             ">
+                                <?php $create_time = explode(' ',$row['created_at'])[0] ?>
                                 <span><?= explode(' ',$row['created_at'])[0] ?></span>
                                 <i class="fa-solid fa-pen-to-square ms-2"></i>
                                 <input type="date" style="visibility: hidden; position: absolute; left: -5rem;"
@@ -225,7 +273,7 @@
                         $list = ['experience','introduction'] ;
                         foreach($list as $label) :
                     ?>
-                    <div class="row edit_field">
+                    <div class="row edit_field align-middle">
                         <div class="col-1 lh-lg mb-1 fw-bold pe-0">
                             <?= $label == 'experience' ? '經歷' : '介紹' ?>:
                         </div>
@@ -240,8 +288,8 @@
                         <div class="col-1 text-end"><i class="fa-solid fa-pen-to-square ms-1" style="cursor: pointer" onclick="document.getElementById('<?= $label ?>_<?= $row[$label] ?>').focus()"></i></div>
                     </div>
                     <?php endforeach ; ?>
-                    <div class="edit_field lh-lg mb-1">
-                        <button class="me-2 btn btn-primary" type="button" onclick="EditExpertise()">專項與證照
+                    <div class="edit_field lh-lg d-flex mt-1 align-items-center">
+                        <button class="me-2 btn btn-primary" type="button" onclick="EditExpertise()">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="me-2 btn btn-secondary" type="button">課程列表
@@ -251,6 +299,10 @@
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="me-2 btn btn-dark" type="button">查看評論</button>
+                        <button class="ms-auto btn btn-secondary" type="button">
+                            <span>刪除教練</span>
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -260,8 +312,14 @@
 </div>
 
 <dialog id="certi_modal">
-    <div class="modal_monitor" style="height: 200px; width:400px; border:1px solid;"></div>
-    <button onclick="document.getElementById('certi_modal').close()">Close</button>
+    <label class="fw-bold" >證照列表 ( 點擊登錄 )</label>
+    <div class="modal_monitor mb-2"></div>
+    <label class="fw-bold" >已登錄證照 ( 點擊移除 )</label>
+    <div class="modal_body mb-3"></div>
+    <div class="text-center">
+        <button class="btn btn-primary me-2">修改</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('certi_modal').close()">取消</button>
+    </div>
 </dialog>
 
 <script>
@@ -318,15 +376,34 @@
 
     async function EditExpertise() {
 
-        // LoadingModal.fire()
+        LoadingModal.fire()
 
-        return document.getElementById('certi_modal').showModal()
+        let modal = document.getElementById('certi_modal')
 
         const response = await fetch("./api/c_l_get_certifications.php", {
-                method: "GET",
+            method: "GET",
         })
 
-        const data = await response.json()
+        const items = await response.json()
+
+        LoadingModal.close()
+
+        let fragment = document.createDocumentFragment()
+        let modalBody = document.querySelector('.modal_body')
+
+        for (let item of items['data']) {
+            let div = document.createElement('div')
+            div.textContent = item['name']
+            div.classList.add('monitor_item')
+            div.addEventListener('click', () => {
+                modalBody.appendChild(div)
+                // modal.close()
+            })
+            fragment.appendChild(div)
+        }
+
+        modal.querySelector('.modal_monitor').appendChild(fragment)
+        modal.showModal()
 
         // console.log(data)
     }
