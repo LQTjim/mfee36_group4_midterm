@@ -40,6 +40,25 @@ include './parts/admin-required.php';
           </a>
         </div>
       </div>
+      <div><!-- 個人訓練 -->
+        <a data-bs-toggle="collapse" class="sidebar-link <?= $pageName === 'record' ? 'active' : '' ?>" href="#menu-record" role="button">
+          <div class="d-flex justify-content-between px-4">
+            <p class="mb-0">
+              <i class="bi bi-card-checklist me-2"></i>
+              個人紀錄
+            </p>
+            <i class="bi bi-caret-down"></i>
+          </div>
+        </a>
+        <div class="collapse" id="menu-record" role="button">
+          <a href="./exercise_record.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            訓練記錄
+          </a>
+          <a href="/diet_record" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            飲食紀錄
+          </a>
+        </div>
+      </div>
       <div><!-- 包含子選項 -->
         <?php $c_l_pages = ['Lessions', 'Coachs', 'Blogs', 'Details Management'] ?>
         <a data-bs-toggle="collapse" class="sidebar-link <?= in_array($pageName, $c_l_pages) ? 'active' : '' ?>" href="#coach-lession" role="button">
@@ -65,13 +84,7 @@ include './parts/admin-required.php';
           </a>
         </div>
       </div>
-      <div><!-- 不包含子選單 -->
-        <a class="sidebar-link" href="/" role="button">
-          <div class="px-4">
-            參考連結
-          </div>
-        </a>
-      </div>
+
     </div>
     <div class="d-flex justify-content-around align-items-center px-1 pb-2 mt-auto w-100">
       <img src="<?= isset($_SESSION['admin']['hero_icon']) ? $_SESSION['admin']['hero_icon'] : "./imgs/defalut_icon.jpg" ?>" alt="<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者' ?>" class="navbar-icon" />
