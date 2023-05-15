@@ -27,6 +27,15 @@ if (isset($_SESSION['admin'])) {
                                 <label class="mb-2 text-muted" for="password">密碼</label>
                                 <input id="password" type="password" class="login-input form-control" name="password" autocomplete="off">
                             </div>
+                            <div class="mb-3">
+
+                                <label class="mb-2 text-muted" for="password">驗證碼</label>
+                                <div class="d-flex align-items-center captcha-container mb-3">
+                                    <div class="captcha text-center text-muted  rounded px-4"></div>
+                                    <i class="fa-solid fa-repeat ms-auto captcha-btn"></i>
+                                </div>
+                                <input id="captcha" type="text" class="login-input form-control" autocomplete="off">
+                            </div>
                             <div class="mb-3" data-error></div>
                             <div class=" d-flex align-items-center justify-content-center">
                                 <button type="button" data-login-btn class="btn btn-primary w-50">
@@ -49,23 +58,45 @@ if (isset($_SESSION['admin'])) {
         const loginBtn = document.querySelector("[data-login-btn]")
         const inputs = document.querySelectorAll('.login-input');
         const errorDiv = document.querySelector('[data-error]');
+        const captchaBtn = document.querySelector('.captcha-btn');
+        const captchaInput = document.querySelector('#captcha');
+        let curCaptcha = ""
+        //input輸入時解除錯誤訊息的框框
         inputs.forEach((el) => {
             el.addEventListener('input', () => {
-                // errorDiv.remove("error-on")
+                errorDiv.innerHTML = ''
+                errorDiv.classList.remove("error-on")
                 el.classList.remove("error-on")
+
             })
         })
-        inputs.forEach((el) => {
-            el.addEventListener('click', () => {
-                errorDiv.remove("error-on")
-                el.classList.remove("error-on")
-            })
-        })
+        // inputs.forEach((el) => {
+        //     el.addEventListener('click', () => {
+        //         errorDiv.remove("error-on")
+        //         el.classList.remove("error-on")
+        //     })
+        // })
+        //登入後訊息提交
         loginBtn.addEventListener('click', forSubmit)
         async function forSubmit(e) {
             e.preventDefault();
-            const fd = new FormData(document.login)
+            //如果都沒填東西就什麼都不做
+            if (inputs[0].value.trim() === "" || inputs[1].value.trim() === "" || captchaInput.value.trim() === "") {
+                errorDiv.innerHTML = '輸入框不得為空'
+                errorDiv.classList.add('error-on')
+                inputs.forEach((el) => el.classList.add('error-on'))
+                return
+            }
+
+            if (captchaInput.value !== curCaptcha) {
+                errorDiv.innerHTML = '驗證碼錯誤請再試一次'
+                errorDiv.classList.add('error-on')
+                inputs[2].classList.add('error-on')
+                console.log("asdf")
+                return
+            }
             try {
+                const fd = new FormData(document.login)
                 const res = await fetch("./api/login-api.php", {
                     method: "POST",
                     body: fd,
@@ -91,12 +122,33 @@ if (isset($_SESSION['admin'])) {
 
                     errorDiv.innerHTML = `${obj.error[0]}`
                     errorDiv.classList.add('error-on')
-                    inputs.forEach((el) => el.classList.add('error-on'))
+                    inputs.forEach((el, i) => {
+                        if (i !== 2) {
+                            el.classList.add('error-on')
+                        }
+                    })
                 }
             } catch (err) {
                 console.log(err)
             }
         }
+        captchaBtn.addEventListener('click', () => {
+            generateCaptcha()
+
+        })
+
+        function generateCaptcha() {
+            let allChars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+            captcha = document.querySelector('.captcha')
+            captcha.innerHTML = ""
+            curCaptcha = ""
+            for (let i = 0; i < 5; i++) {
+                const randChar = allChars[Math.floor(Math.random() * allChars.length)]
+                curCaptcha += randChar
+                captcha.innerHTML += `<span style="transform:rotate(${-20+Math.trunc(Math.random()*30)}deg);">${randChar}</span>`
+            }
+        }
+        generateCaptcha()
     })()
 </script>
 <?php include './parts/html-footer.php' ?>

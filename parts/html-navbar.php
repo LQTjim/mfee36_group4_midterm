@@ -73,8 +73,13 @@ include './parts/admin-required.php';
         </a>
       </div>
     </div>
-    <div class="mt-auto text-end pe-4 pb-4"><a class="btn btn-primary" href="./api/logout-api.php" role="button">登出</a></div>
-
+    <div class="d-flex justify-content-around align-items-center px-1 pb-2 mt-auto w-100">
+      <img src="<?= isset($_SESSION['admin']['hero_icon']) ? $_SESSION['admin']['hero_icon'] : "./imgs/defalut_icon.jpg" ?>" alt="<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者' ?>" class="navbar-icon" />
+      <div class="ps-2">Hi,<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者'  ?> 您好</div>
+    </div>
+    <div class="d-flex px-2 pb-1">
+      <a class="w-100 btn btn-primary " href="./api/logout-api.php" role="button">登出</a>
+    </div>
   </aside>
   <main class="main">
     <!-- <div class="bg-white w-100 border-bottom sticky-top">
