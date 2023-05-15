@@ -156,7 +156,7 @@ ORDER BY
                                 <div><?= $r['tier'] ?></div>
                             </td>
                             <td>
-                                <img class="member-list-hero-icon" src="<?= $r['hero_icon'] ?>" alt="使用者頭像"></img>
+                                <img class="member-list-hero-icon  rounded-circle" src="<?= isset($r['hero_icon']) ? $r['hero_icon'] : "./imgs/defalut_icon.jpg" ?>" alt="使用者頭像"></img>
                             </td>
                             <td>
                                 <div><?= $r['role'] ?></div>
