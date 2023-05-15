@@ -1,5 +1,6 @@
 <?php
 $pageName = 'member';
+$subPageName = 'member_list';
 $title = '會員列表';
 include './parts/html-head.php';
 include './parts/html-navbar.php';
