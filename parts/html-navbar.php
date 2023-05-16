@@ -85,6 +85,31 @@ include './parts/admin-required.php';
         </div>
       </div>
 
+
+      <div><!-- 購物車 -->
+        <a data-bs-toggle="collapse" class="sidebar-link" href="#order_cart" role="button">
+          <div class="d-flex justify-content-between px-4">
+            <p class="mb-0">
+              消費紀錄
+            </p>
+            <i class="fa-solid fa-caret-down"></i>
+          </div>
+        </a>
+        <div class="collapse" id="order_cart" role="button">
+          <a href="./order_cart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            購物車
+          </a>
+          <a href="./order_main.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            歷史訂單
+          </a>
+          <a href="./order_detail.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            歷史訂單詳細資訊
+          </a>
+          <a href="./order_blank.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            blank
+          </a>
+        </div>
+      </div>
     </div>
     <div class="d-flex justify-content-around align-items-center px-1 pb-2 mt-auto w-100">
       <img src="<?= isset($_SESSION['admin']['hero_icon']) ? $_SESSION['admin']['hero_icon'] : "./imgs/defalut_icon.jpg" ?>" alt="<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者' ?>" class="navbar-icon" />
