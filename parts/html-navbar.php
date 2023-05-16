@@ -68,16 +68,40 @@ include './parts/admin-required.php';
           </a>
         </div>
       </div>
-      <div><!-- 不包含子選單 -->
-        <a class="sidebar-link" href="/" role="button">
-          <div class="px-4">
-            參考連結
+      <div><!-- 包含子選項 -->
+        <?php $c_l_pages = ['Lessions', 'Coachs', 'Blogs', 'Details Management'] ?>
+        <a data-bs-toggle="collapse" class="sidebar-link <?= in_array($pageName, $c_l_pages) ? 'active' : '' ?>" href="#coach-lession" role="button">
+          <div class="d-flex justify-content-between px-4">
+            <p class="mb-0">
+              教練與課程系統
+            </p>
+            <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
+        <div class="collapse" id="coach-lession" role="button">
+          <a href="./coach_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            教練列表
+          </a>
+          <a href="./lession_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            課程列表
+          </a>
+          <a href="./blog_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            部落格列表
+          </a>
+          <a href="./details_manage.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            細項管理
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="mt-auto text-end pe-4 pb-4"><a class="btn btn-primary" href="./api/logout-api.php" role="button">登出</a></div>
 
+    </div>
+    <div class="d-flex justify-content-around align-items-center px-1 pb-2 mt-auto w-100">
+      <img src="<?= isset($_SESSION['admin']['hero_icon']) ? $_SESSION['admin']['hero_icon'] : "./imgs/defalut_icon.jpg" ?>" alt="<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者' ?>" class="navbar-icon" />
+      <div class="ps-2">Hi,<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者'  ?> 您好</div>
+    </div>
+    <div class="d-flex px-2 pb-1">
+      <a class="w-100 btn btn-primary " href="./api/logout-api.php" role="button">登出</a>
+    </div>
   </aside>
   <main class="main">
     <!-- <div class="bg-white w-100 border-bottom sticky-top">
