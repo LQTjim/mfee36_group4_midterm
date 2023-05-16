@@ -11,3 +11,18 @@
 .member-created_at {
   width: 150px;
 }
+
+/* member_add.php */
+.add-form-btn {
+  cursor: pointer;
+}
+.add-form-btn i {
+  font-size: 50px;
+  color: #91009b;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+.add-form-btn:hover i {
+  opacity: 1;
+  font-size: 100px;
+}
