@@ -6,155 +6,7 @@
     include './parts/html-navbar.php';
 ?>
 
-<style>
-
-    .c_li_container * {
-        box-sizing: border-box;
-    }
-
-    .c_li_container .card{
-        padding: 20px;
-        min-width: 200px;
-        height: 250px;
-    }
-
-    @media (max-width: 767px) {
-        .c_li_container .card{
-            height: 100%;
-        }
-    }
-
-    .c_li_container .img-box {
-        position: relative;
-        height: 100%;
-    }
-
-    .c_li_container .img-box img {
-        object-fit: cover;
-        height: 100%;
-        width: 100%;
-    }
-
-    .c_li_container .edit-img {
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 4.5rem;
-        height: 100%;
-        width: 100%;
-        top: 0;
-        left: 0;
-        background-color: #fff;
-        overflow: hidden;
-        opacity: 0;
-        cursor: pointer;
-    }
-    
-    .c_li_container .edit-img:hover {
-        opacity: 0.5;
-    }
-
-    /* style for Swal below*/
-
-    .c_l_spinner {
-        width: 5rem !important;
-        height: 5rem !important;
-    }
-
-    .c_l_progressBar {
-        height: .5rem;
-    }
-
-    /* style for Swal above*/
-
-    @media (max-width: 1340px) {
-        .c_li_container .coach_name_field {
-            flex-direction: column;
-        }
-
-        .c_li_container .coach_name_field .edit_field:last-child {
-            margin: 0 !important;
-        } 
-    }
-
-    .c_li_container .coach_name_field {
-        display: flex;
-        justify-content: start;
-    }
-
-
-    .c_li_container .edit_button {
-        all: unset;
-        cursor: pointer;
-    }
-
-    .c_li_container .edit_field {
-        font-size: 1.2rem;
-    }
-
-    .c_li_container .name_input {
-        position: absolute;
-        line-height: 1;
-        border-radius: 3px;
-        top: 0;
-        left: 0;
-        width: 6rem;
-        transition: width .5s, border-width 0s .5s;
-    }
-    
-    .c_li_container .hide {
-        border-width: 0;
-        padding: 0;
-        width: 0;
-    }
-
-    .c_li_container .hide_text {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    .c_li_container .long_text:disabled {
-        background-color: transparent;
-    }
-
-    /* Modal style below*/
-    
-    dialog {
-        border-radius: 8px;
-        border: 0;
-    }
-
-    .modal_monitor {
-        height: 180px;
-    }
-    
-    .modal_body {
-        height: 150px;
-    }
-
-    .modal_monitor, .modal_body {
-        width: 50vw;
-        border: 3px solid grey;
-        padding: .5rem 0;
-        overflow-y: scroll;
-        user-select: none;
-        /* resize: vertical; */
-    }
-
-    .modal_item {
-        padding: 0 .5rem;
-        text-align: center;
-        cursor: pointer;
-    }
-
-    .modal_item:hover {
-        background-color: lightskyblue;
-    }
-
-    /* Modal style above*/
-</style>
+<link rel="stylesheet" href="./css/coach.css">
 
 <?php
 
@@ -178,11 +30,6 @@
 
 ?>
 
-<pre><?php
-    // print_r($rows) ;
-    // exit ;
-?></pre>
-
 <div class="c_li_container container">
     <div class="d-flex justify-content-between mb-3">
         <select class="form-select" style="width: 5rem;" onchange="
@@ -193,13 +40,13 @@
                 <option value="<?= $row['sid'] ?>" <?= $u_id == $row['sid'] ? 'selected' : '' ?> ><?= $row['sid'] ?></option>
             <?php endforeach ; ?>
         </select>
-        <button class="btn btn-primary" type="button">新增教練</button>
+        <button class="btn btn-primary" type="button" onclick="window.location='coach_add.php'">新增教練</button>
     </div>
     <?php foreach($rows as $row): ?>
     <div class="card mb-3">
         <div class="row g-0 h-100">
             <div class="col-lg-2 col-md-3 col-sm-4 img-box">
-                <img src="<?= $row['photo'] ?>" class="img-fluid rounded" alt="...">
+                <img src="<?= $row['photo'] ?>" class="img-fluid rounded" alt="coach img">
                 <i class="fa-solid fa-pen-to-square edit-img" onclick="document.getElementById('photo_<?= $row['sid'] ?>').click()"></i>
                 <input type="file" accept="image/png, image/jpeg, image/webp" id="photo_<?= $row['sid'] ?>" onchange="Edit({
                     'sid': <?= $row['sid'] ?>,
@@ -297,11 +144,7 @@
                         <button class="me-2 btn btn-secondary" type="button">課程列表
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
-                        <button class="me-2 btn btn-secondary" type="button">文章列表
-                            <i class="fa-solid fa-pen-to-square ms-1"></i>
-                        </button>
-                        <button class="me-2 btn btn-dark" type="button">查看評論</button>
-                        <button class="ms-auto btn btn-secondary" type="button">
+                        <button class="ms-auto btn btn-dark" type="button">
                             <span>刪除教練</span>
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
@@ -330,6 +173,13 @@
             });
             CloseCertiModal();
         ">修改</button>
+        <button class="btn btn-secondary" onclick="CloseCertiModal()">取消</button>
+    </div>
+</dialog>
+
+<dialog id="newcoach_modal">
+    <div class="text-center">
+        <button class="btn btn-primary me-2" onclick="">新增</button>
         <button class="btn btn-secondary" onclick="CloseCertiModal()">取消</button>
     </div>
 </dialog>
