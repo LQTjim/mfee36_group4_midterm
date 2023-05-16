@@ -139,15 +139,17 @@
         border: 3px solid grey;
         padding: .5rem 0;
         overflow-y: scroll;
+        user-select: none;
+        /* resize: vertical; */
     }
 
-    .monitor_item {
+    .modal_item {
         padding: 0 .5rem;
         text-align: center;
         cursor: pointer;
     }
-    
-    .monitor_item:hover {
+
+    .modal_item:hover {
         background-color: lightskyblue;
     }
 
@@ -289,7 +291,7 @@
                     </div>
                     <?php endforeach ; ?>
                     <div class="edit_field lh-lg d-flex mt-1 align-items-center">
-                        <button class="me-2 btn btn-primary" type="button" onclick="EditExpertise()">編輯證照
+                        <button class="me-2 btn btn-primary" type="button" onclick="EditExpertise(<?= $row['sid'] ?>)">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="me-2 btn btn-secondary" type="button">課程列表
@@ -317,8 +319,22 @@
     <label class="fw-bold" >已登錄證照 ( 點擊移除 )</label>
     <div class="modal_body mb-3"></div>
     <div class="text-center">
-        <button class="btn btn-primary me-2">修改</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('certi_modal').close()">取消</button>
+        <button class="btn btn-primary me-2" onclick="
+            const [...items] = document.querySelector('.modal_body').querySelectorAll('.modal_item')
+            const data = items.map(item => item.textContent)
+        ">修改</button>
+        <button class="btn btn-secondary" onclick="
+            let parents = [
+                document.querySelector('.modal_body'),
+                document.querySelector('.modal_monitor')
+            ];
+            for(let parent of parents ) {
+                while (parent.firstChild) {
+                    parent.removeChild(parent.firstChild);
+                }
+            }
+            document.getElementById('certi_modal').close();
+        ">取消</button>
     </div>
 </dialog>
 
@@ -374,13 +390,13 @@
         }
     }
 
-    async function EditExpertise() {
+    async function EditExpertise(sid) {
 
         LoadingModal.fire()
 
         let modal = document.getElementById('certi_modal')
 
-        const response = await fetch("./api/c_l_get_certifications.php", {
+        const response = await fetch(`./api/c_l_get_certifications.php?id=${sid}`, {
             method: "GET",
         })
 
@@ -388,22 +404,45 @@
 
         LoadingModal.close()
 
-        let fragment = document.createDocumentFragment()
+        let moni_frag = document.createDocumentFragment()
+        let body_frag = document.createDocumentFragment()
+        let monitor = document.querySelector('.modal_monitor')
         let modalBody = document.querySelector('.modal_body')
+
+        for (let item of items['all']) {
+            let div = document.createElement('div')
+            div.textContent = item['name']
+            div.classList.add('modal_item')
+            div.addEventListener('click', () => {
+                detectOwn(div)
+            })
+            moni_frag.appendChild(div)
+        }
+        monitor.appendChild(moni_frag)
 
         for (let item of items['data']) {
             let div = document.createElement('div')
             div.textContent = item['name']
-            div.classList.add('monitor_item')
+            div.classList.add('modal_item')
+            div.setAttribute('data-own', '')
             div.addEventListener('click', () => {
-                modalBody.appendChild(div)
-                // modal.close()
+                detectOwn(div)
             })
-            fragment.appendChild(div)
+            body_frag.appendChild(div)
         }
+        modalBody.appendChild(body_frag)
 
-        modal.querySelector('.modal_monitor').appendChild(fragment)
         modal.showModal()
+
+        function detectOwn(element) {
+            if ('own' in element.dataset) {
+                delete element.dataset.own 
+                monitor.appendChild(element)
+                return
+            } 
+            element.setAttribute('data-own', '')
+            modalBody.appendChild(element)
+        }
 
         // console.log(data)
     }
