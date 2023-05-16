@@ -48,9 +48,10 @@ include './parts/html-navbar.php';
         let additionForm = 1;
         const form = document.querySelector('form')
         const addBtn = document.querySelector('#addBtn')
-        addFormBtn = document.querySelector("[data-add-form]");
+        const addFormBtn = document.querySelector("[data-add-form]");
+        //add new form through this button 
         addFormBtn.addEventListener('click', () => {
-            if (form.children.length === 4) {
+            if (form.children.length === 5) {
                 addFormBtn.classList.add('d-none')
             }
             if (form.children.length <= 5) {
@@ -81,6 +82,7 @@ include './parts/html-navbar.php';
             }
 
         });
+        //delete additional column through this btn
         form.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-col')) {
                 console.log(form.children.length)
@@ -90,8 +92,10 @@ include './parts/html-navbar.php';
                 }
             }
         })
+        //submit btn
         addBtn.addEventListener("click", () => {
-            let validation
+            let validation = true
+            //check not null
             document.querySelectorAll('input').forEach((el) => {
                 if (el.value.trim() === "") {
                     validation = false
@@ -111,7 +115,6 @@ include './parts/html-navbar.php';
                     }).then((r) => r.json())
                     .then((d) => {
                         if (d.success === true) {
-                            // 登入成功->顯示登入成功->sleep(1秒)->跳轉
                             Swal.fire({
                                 text: '新增成功',
                                 icon: 'success',
@@ -125,7 +128,7 @@ include './parts/html-navbar.php';
                     }).catch((err) => {
                         Swal.fire({
                             text: '新增失敗',
-                            icon: 'danger',
+                            icon: 'error',
                             showCancelButton: false,
                             showConfirmButton: false
                         })

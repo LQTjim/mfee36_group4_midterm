@@ -14,7 +14,8 @@ if ($page < 1) {
     header('Location: ?page=1');
     exit;
 }
-$t_sql = "SELECT COUNT(1) FROM `member`";
+$query = isset($_GET['query']) ? $_GET['query'] : '';
+$t_sql = "SELECT COUNT(1) FROM `member` WHERE `name` LIKE '%$query%'";
 $totalRows = $pdo->query($t_sql)->fetch(PDO::FETCH_NUM)[0]; # 總筆數
 $totalPages = ceil($totalRows / $perPage); # 總頁數
 $rows = [];
@@ -44,12 +45,13 @@ END AS `role`,
 m.`created_at`,
 m.`active`
 FROM
-`member` m
+`member` m 
 JOIN `member_sex` ms ON m.sex_sid = ms.sid
 JOIN `member_level` ml ON m.`member_level_sid` = ml.sid
-JOIN `member_role` mr ON m.`role_sid` = mr.sid
+JOIN `member_role` mr ON m.`role_sid` = mr.sid 
+WHERE m.name LIKE '%%%s%%'
 ORDER BY
-`m`.`sid` ASC LIMIT %s, %s", ($page - 1) * $perPage, $perPage);
+`m`.`sid` DESC LIMIT %s, %s", $query, ($page - 1) * $perPage, $perPage);
     $rows = $pdo->query($sql)->fetchAll();
 }
 ?>
@@ -64,12 +66,12 @@ ORDER BY
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-end mb-0">
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=1">
+                    <a class="page-link" href="?page=1<?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angles-left"></i>
                     </a>
                 </li>
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>">
+                    <a class="page-link" href="?page=<?= $page - 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angle-left"></i>
                     </a>
                 </li>
@@ -77,17 +79,17 @@ ORDER BY
                     if ($i >= 1 and $i <= $totalPages) :
                 ?>
                         <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            <a class="page-link" href="?page=<?= $i ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>"><?= $i ?></a>
                         </li>
                 <?php endif;
                 endfor; ?>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>">
+                    <a class="page-link" href="?page=<?= $page + 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angle-right"></i>
                     </a>
                 </li>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $totalPages ?>">
+                    <a class="page-link" href="?page=<?= $totalPages ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angles-right"></i>
                     </a>
                 </li>
@@ -99,7 +101,7 @@ ORDER BY
         <div class="input-group">
             <div class="dropdown">
                 <button class="btn btn-outline-dark dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    依類別
+                    依姓名
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="#">依姓名</a></li>
@@ -119,7 +121,7 @@ ORDER BY
                 <thead class="bg-light">
                     <tr class="align-middle">
                         <th scope="col" class="ps-4">
-                            <input type="checkbox" class="form-check-input" data-chechAll>
+                            <input type="checkbox" class="form-check-input" data-checkAll>
                         </th>
                         <th scope="col" class="py-3 ">會員編號</th>
                         <th scope="col">Email</th>
@@ -139,7 +141,7 @@ ORDER BY
                     <?php foreach ($rows as $r) : ?>
                         <tr>
                             <td class="ps-4">
-                                <input type="checkbox" class="form-check-input">
+                                <input type="checkbox" class="form-check-input" data-check="<?= $r['sid'] ?>">
                             </td>
                             <td scope="row"><?= $r['sid'] ?></td>
                             <td><?= $r['email'] ?></td>
@@ -178,7 +180,7 @@ ORDER BY
                                         操作
                                     </button> -->
 
-                                    <a class="dropdown-item text-info" href="./member_update.php?sid=<?= $r['sid'] ?>">修改狀態</a></li>
+                                    <a class="dropdown-item text-info" href="./member_update.php?sid=<?= $r['sid'] ?>">修改</a></li>
                                     <a class="dropdown-item text-danger" href="" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-member-id="<?= $r['sid'] ?>">刪除</a></li>
                                     </ul>
                                 </div>
@@ -188,17 +190,18 @@ ORDER BY
                 </tbody>
             </table>
         </div>
+        <button class="btn btn-danger m-1" id="deleteSelected">刪除選取項目</button>
     </div>
     <div class="card-footer bg-transparent py-3">
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-end mb-0">
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=1">
+                    <a class="page-link" href="?page=1<?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angles-left"></i>
                     </a>
                 </li>
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>">
+                    <a class="page-link" href="?page=<?= $page - 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angle-left"></i>
                     </a>
                 </li>
@@ -206,17 +209,17 @@ ORDER BY
                     if ($i >= 1 and $i <= $totalPages) :
                 ?>
                         <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            <a class="page-link" href="?page=<?= $i ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>"><?= $i ?></a>
                         </li>
                 <?php endif;
                 endfor; ?>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>">
+                    <a class="page-link" href="?page=<?= $page + 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angle-right"></i>
                     </a>
                 </li>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $totalPages ?>">
+                    <a class="page-link" href="?page=<?= $totalPages ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
                         <i class="fa-solid fa-angles-right"></i>
                     </a>
                 </li>
@@ -316,10 +319,39 @@ ORDER BY
     </div>
     <script>
         (function() {
+            const search = document.querySelector('input[type=search]')
             const tbody = document.querySelector('[data-tbody]');
-            const tdCheckbox = document.querySelectorAll('td input[checkbox]:checked')
-            // console.log(tdCheckbox)
-            let updateObj = {}
+            const tdCheckAll = document.querySelector('[data-checkAll]')
+            const tdCheck = document.querySelectorAll('[data-check]')
+            const deleteSelected = document.querySelector('#deleteSelected')
+            let listBoolean = []
+            search.addEventListener('change', (e) => {
+                location.href = `./member_list.php?query=${e.target.value}`
+            })
+            tdCheck.forEach((el) => {
+                el.addEventListener('change', () => {
+                    tdCheck.forEach((ele) => {
+                        listBoolean.push(ele.checked)
+                    })
+                    if (listBoolean.includes(false)) {
+                        tdCheckAll.checked = false;
+                    } else {
+                        tdCheckAll.checked = true;
+                    }
+                    listBoolean = []
+                })
+            })
+            tdCheckAll.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    tdCheck.forEach((el) => {
+                        el.checked = true
+                    })
+                } else {
+                    tdCheck.forEach((el) => {
+                        el.checked = false
+                    })
+                }
+            })
             tbody.addEventListener('wheel', (e) => {
                 if (e.target.classList.contains('member-address') || e.target.classList.contains('member-created_at')) {
                     if (e.deltaY == 0) return;
@@ -340,41 +372,7 @@ ORDER BY
                 const modalText = modalByDelete.querySelector('#deleteText');
                 modalText.textContent = memberId;
             })
-            const modalByUpdate = document.querySelector('#updateModal');
-            modalByUpdate.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                //active role hero_icon tier sex address birth
-                const {
-                    bsMemberId: memberId,
-                    bsMemberEmail: memberEmail,
-                    bsMemberBirth: memberBirth,
-                    bsMemberAddress: memberAddress,
-                    bsMemberSex: memberSex,
-                    bsMemberTier: memberTier,
-                    bsMemberHeroicon: memberHeroicon,
-                    bsMemberRole: memberRole,
-                    bsMemberActive: memberActive,
-                } = button.dataset;
-                const modalText = modalByUpdate.querySelector('#updateText');
-                modalText.textContent = memberId;
-                const modalEmailInput = modalByUpdate.querySelector('#emailInput')
-                modalEmailInput.value = memberEmail
-                const modalBirthInput = modalByUpdate.querySelector('#birthInput')
-                modalBirthInput.value = memberBirth
-                const modalAddressInput = modalByUpdate.querySelector('#addressInput')
-                modalAddressInput.value = memberAddress
-                const modalSexInput = modalByUpdate.querySelector('#sexInput')
-                modalSexInput.value = memberSex
-                const modalTierInput = modalByUpdate.querySelector('#tierInput')
-                modalTierInput.value = memberTier
-                const modalHeroiconInput = modalByUpdate.querySelector('#heroiconInput')
-                modalHeroiconInput.src = memberHeroicon
-                const modalRoleInput = modalByUpdate.querySelector('#roleInput')
-                modalRoleInput.value = memberRole
-                const modalActiveInput = modalByUpdate.querySelector('#activeInput')
-                modalActiveInput.value = memberActive
 
-            })
             const deleteBtn = document.querySelector('#deleteModal button.btn.btn-danger')
             deleteBtn.addEventListener('click', () => {
                 const fd = new FormData();
@@ -415,6 +413,10 @@ ORDER BY
 
             //     })
             // })
+            deleteSelected.addEventListener('click', () => {
+                const deleteSelectedSid = [];
+                Array.from(tdCheck.querySelector(''));
+            })
         })()
     </script>
 </div>
