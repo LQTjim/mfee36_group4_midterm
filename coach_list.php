@@ -201,7 +201,7 @@
             <div class="col-lg-2 col-md-3 col-sm-4 img-box">
                 <img src="<?= $row['photo'] ?>" class="img-fluid rounded" alt="...">
                 <i class="fa-solid fa-pen-to-square edit-img" onclick="document.getElementById('photo_<?= $row['sid'] ?>').click()"></i>
-                <input type="file" accept="image/png, image/jpeg, image/webp" id="photo_<?= $row['sid'] ?>" onchange="edit({
+                <input type="file" accept="image/png, image/jpeg, image/webp" id="photo_<?= $row['sid'] ?>" onchange="Edit({
                     'sid': <?= $row['sid'] ?>,
                     'type': 'photo',
                     'data': this.files[0]
@@ -229,7 +229,7 @@
                                 <span><?= explode(' ',$row['created_at'])[0] ?></span>
                                 <i class="fa-solid fa-pen-to-square ms-2"></i>
                                 <input type="date" style="visibility: hidden; position: absolute; left: -5rem;"
-                                onchange="edit({  
+                                onchange="Edit({  
                                     'sid': <?= $row['sid'] ?>,
                                     'type': 'date',
                                     'data': this.value
@@ -260,7 +260,7 @@
                                 <span class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2"><?= $row[$label] ?></span>
                                 <input class="name_input hide" type="text" onkeyup="
                                     if(event.which !== 13) return; 
-                                    edit({  'sid': <?= $row['sid'] ?>,
+                                    Edit({  'sid': <?= $row['sid'] ?>,
                                             'type': '<?= $label ?>',
                                             'data': this.value
                                     });
@@ -281,7 +281,7 @@
                         </div>
                         <input id="<?= $label ?>_<?= $row[$label] ?>" class="col-10 hide_text lh-base align-self-center border border-0" type="text" value="<?= $row[$label] ?>" onkeyup="
                             if(event.which !== 13) return; 
-                            edit({  'sid': <?= $row['sid'] ?>,
+                            Edit({  'sid': <?= $row['sid'] ?>,
                                     'type': '<?= $label ?>',
                                     'data': this.value
                             });
@@ -291,7 +291,7 @@
                     </div>
                     <?php endforeach ; ?>
                     <div class="edit_field lh-lg d-flex mt-1 align-items-center">
-                        <button class="me-2 btn btn-primary" type="button" onclick="EditExpertise(<?= $row['sid'] ?>)">編輯證照
+                        <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>)">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="me-2 btn btn-secondary" type="button">課程列表
@@ -320,21 +320,17 @@
     <div class="modal_body mb-3"></div>
     <div class="text-center">
         <button class="btn btn-primary me-2" onclick="
-            const [...items] = document.querySelector('.modal_body').querySelectorAll('.modal_item')
-            const data = items.map(item => item.textContent)
+            const [...items] = document.querySelector('.modal_body').querySelectorAll('.modal_item');
+            const data = items.map(item => parseInt(item.dataset.cid));
+            let sid = document.getElementById('certi_modal').dataset.sid;
+            // return console.log({'sid': parseInt(sid),'type': 'certification','data': data});
+            Edit({  'sid': parseInt(sid),
+                    'type': 'certification',
+                    'data': data
+            });
+            CloseCertiModal();
         ">修改</button>
-        <button class="btn btn-secondary" onclick="
-            let parents = [
-                document.querySelector('.modal_body'),
-                document.querySelector('.modal_monitor')
-            ];
-            for(let parent of parents ) {
-                while (parent.firstChild) {
-                    parent.removeChild(parent.firstChild);
-                }
-            }
-            document.getElementById('certi_modal').close();
-        ">取消</button>
+        <button class="btn btn-secondary" onclick="CloseCertiModal()">取消</button>
     </div>
 </dialog>
 
@@ -351,7 +347,7 @@
         willOpen: () => Swal.showLoading()
     })
 
-    async function edit(obj) {
+    async function Edit(obj) {
 
         LoadingModal.fire()
 
@@ -390,11 +386,12 @@
         }
     }
 
-    async function EditExpertise(sid) {
+    async function OpenCertiModal(sid) {
 
         LoadingModal.fire()
 
         let modal = document.getElementById('certi_modal')
+        modal.setAttribute('data-sid', sid)
 
         const response = await fetch(`./api/c_l_get_certifications.php?id=${sid}`, {
             method: "GET",
@@ -411,8 +408,9 @@
 
         for (let item of items['all']) {
             let div = document.createElement('div')
-            div.textContent = item['name']
             div.classList.add('modal_item')
+            div.textContent = item['name']
+            div.setAttribute('data-cid', item['sid'])
             div.addEventListener('click', () => {
                 detectOwn(div)
             })
@@ -422,8 +420,9 @@
 
         for (let item of items['data']) {
             let div = document.createElement('div')
-            div.textContent = item['name']
             div.classList.add('modal_item')
+            div.textContent = item['name']
+            div.setAttribute('data-cid', item['certification_sid'])
             div.setAttribute('data-own', '')
             div.addEventListener('click', () => {
                 detectOwn(div)
@@ -445,6 +444,23 @@
         }
 
         // console.log(data)
+    }
+
+    function CloseCertiModal() {
+        let parents = [
+                document.querySelector('.modal_body'),
+                document.querySelector('.modal_monitor')
+            ];
+
+        for(let parent of parents ) {
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+        }
+        
+        let certi_modal = document.getElementById('certi_modal');
+        certi_modal.removeAttribute('data-sid');
+        certi_modal.close();
     }
 
 </script>
