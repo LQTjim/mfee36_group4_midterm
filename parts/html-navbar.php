@@ -40,22 +40,31 @@ include './parts/admin-required.php';
           </a>
         </div>
       </div>
+
       <div><!-- 個人訓練 -->
         <a data-bs-toggle="collapse" class="sidebar-link <?= $pageName === 'record' ? 'active' : '' ?>" href="#menu-record" role="button">
           <div class="d-flex justify-content-between px-4">
             <p class="mb-0">
-              <i class="bi bi-card-checklist me-2"></i>
               個人紀錄
             </p>
-            <i class="bi bi-caret-down"></i>
+            <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
         <div class="collapse" id="menu-record" role="button">
-          <a href="./exercise_record.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+          <a href="./record_condition.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            體態紀錄
+          </a>
+          <a href="./record_exercise_record.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             訓練記錄
           </a>
-          <a href="/diet_record" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+          <a href="./record_diet_record.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             飲食紀錄
+          </a>
+          <a href="./record_exercise_type.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            運動列表
+          </a>
+          <a href="./record_food_type.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            食物列表
           </a>
         </div>
       </div>
