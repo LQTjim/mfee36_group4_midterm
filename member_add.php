@@ -14,59 +14,24 @@ include './parts/html-navbar.php';
 </div>
 <div class="w-100 d-flex justify-content-center align-items-center">
     <form class=" row w-100" name="add-member">
+        <div class="col-12 "><button type="button" class="btn btn-primary w-100" id="addBtn">確認新增</button></div>
         <div class="p-2 col-6">
             <div class="border border-secondary rounded p-5 ">
-                <div class="fs-3">新增使用者 1</div>
+                <div class="fs-3">新增使用者</div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="text" name="email[]" class="form-control" id="email" placeholder="name@example.com">
+                    <div class="error-div"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">姓名</label>
+                    <input type="text" name="name[]" class="form-control" id="name" placeholder="請輸入姓名">
+                    <div class="error-div"></div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">密碼</label>
                     <input type="text" name="password[]" class="form-control" id="password" placeholder="請輸入密碼">
-                </div>
-                <div class="mb-3">
-                    <label for="mobile" class="form-label">電話</label>
-                    <input type="text" name="mobile[]" class="form-control" id="mobile" placeholder="請輸入電話">
-                </div>
-                <div class="mb-3">
-                    <label for="birth" class="form-label">生日</label>
-                    <input type="date" name="birth[]" class="form-control" id="birth">
-                </div>
-                <div class="mb-3">
-                    <label for="address" class="form-label">地址</label>
-                    <input type="text" name="address[]" class="form-control" id="address" placeholder="請輸入地址">
-                </div>
-                <div class="mb-3">
-                    <label for="sex" class="form-label">性別</label>
-                    <select name="sex[]" id="sex">
-                        <option value="0">男</option>
-                        <option value="1">女</option>
-                        <option value="2">不透漏</option>
-                        <option value="">無</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="level" class="form-label">會員等級</label>
-                    <select name="level[]" id="level">
-                        <option value="1" selected>銅牌會員</option>
-                        <option value="2">銀牌會員</option>
-                        <option value="3">金牌會員</option>
-                        <option value="4">白金會員</option>
-                        <option value="5">鑽石會員</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">會員權限</label>
-                    <select name="level[]" id="role">
-                        <option value="1" selected>用戶</option>
-                        <option value="2">教練</option>
-                        <option value="3">管理員</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="hero_icon" class="form-label">會員頭像</label>
-                    <input type="file" name="hero_icon[]" id="hero_icon" />
+                    <div class="error-div"></div>
                 </div>
             </div>
         </div>
@@ -82,6 +47,7 @@ include './parts/html-navbar.php';
     (function() {
         let additionForm = 1;
         const form = document.querySelector('form')
+        const addBtn = document.querySelector('#addBtn')
         addFormBtn = document.querySelector("[data-add-form]");
         addFormBtn.addEventListener('click', () => {
             if (form.children.length === 4) {
@@ -95,54 +61,20 @@ include './parts/html-navbar.php';
                 <div class="mb-3">
                     <label for="email${additionForm+1}" class="form-label">Email</label>
                     <input type="text" name="email[]" class="form-control" id="email${additionForm+1}" placeholder="name@example.com">
+                    <div class="error-div"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="name${additionForm+1}" class="form-label">姓名</label>
+                    <input type="text" name="name[]" class="form-control" id="name${additionForm+1}" placeholder="請輸入姓名">
+                    <div class="error-div"></div>
                 </div>
                 <div class="mb-3">
                     <label for="password${additionForm+1}" class="form-label">密碼</label>
                     <input type="text" name="password[]" class="form-control" id="password${additionForm+1}" placeholder="請輸入密碼">
+                    <div class="error-div"></div>
                 </div>
-                <div class="mb-3">
-                    <label for="mobile${additionForm+1}" class="form-label">電話</label>
-                    <input type="text" name="mobile[]" class="form-control" id="mobile${additionForm+1}" placeholder="請輸入電話">
-                </div>
-                <div class="mb-3">
-                    <label for="birth${additionForm+1}" class="form-label">生日</label>
-                    <input type="date" name="birth[]" class="form-control" id="birth${additionForm+1}">
-                </div>
-                <div class="mb-3">
-                    <label for="address${additionForm+1}" class="form-label">地址</label>
-                    <input type="text" name="address[]" class="form-control" id="address${additionForm+1}" placeholder="請輸入地址">
-                </div>
-                <div class="mb-3">
-                    <label for="sex${additionForm+1}" class="form-label">性別</label>
-                    <select name="sex[]" id="sex${additionForm+1}">
-                        <option value="0">男</option>
-                        <option value="1">女</option>
-                        <option value="2">不透漏</option>
-                        <option value="">無</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="level${additionForm+1}" class="form-label">會員等級</label>
-                    <select name="level[]" id="level${additionForm+1}">
-                        <option value="1" selected>銅牌會員</option>
-                        <option value="2">銀牌會員</option>
-                        <option value="3">金牌會員</option>
-                        <option value="4">白金會員</option>
-                        <option value="5">鑽石會員</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="role${additionForm+1}" class="form-label">會員權限</label>
-                    <select name="role[]" id="role${additionForm+1}">
-                        <option value="1" selected>用戶</option>
-                        <option value="2">教練</option>
-                        <option value="3">管理員</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="hero_icon${additionForm+1}" class="form-label">會員頭像</label>
-                    <input type="file" name="hero_icon[]" id="hero_icon${additionForm+1}" />
-                </div>
+                
+                
             </div>`
                 form.insertBefore(newForm, form.children[form.children.length - 1])
                 additionForm++;
@@ -157,6 +89,49 @@ include './parts/html-navbar.php';
                     addFormBtn.classList.remove('d-none')
                 }
             }
+        })
+        addBtn.addEventListener("click", () => {
+            let validation
+            document.querySelectorAll('input').forEach((el) => {
+                if (el.value.trim() === "") {
+                    validation = false
+                    el.nextElementSibling.classList.add('error');
+                    el.nextElementSibling.innerText = "不得為空"
+
+                }
+            })
+            if (validation) {
+                const fd = new FormData(form)
+                for (var pair of fd.entries()) {
+                    console.log(pair[0] + ', ' + pair[1]);
+                }
+                fetch('./api/member-add-api.php', {
+                        method: 'POST',
+                        body: fd
+                    }).then((r) => r.json())
+                    .then((d) => {
+                        if (d.success === true) {
+                            // 登入成功->顯示登入成功->sleep(1秒)->跳轉
+                            Swal.fire({
+                                text: '新增成功',
+                                icon: 'success',
+                                showCancelButton: false,
+                                showConfirmButton: false
+                            })
+                            setTimeout(() => {
+                                location.href = "member_add.php"
+                            }, 1000)
+                        }
+                    }).catch((err) => {
+                        Swal.fire({
+                            text: '新增失敗',
+                            icon: 'danger',
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        })
+                    })
+            }
+
         })
     })()
 </script>

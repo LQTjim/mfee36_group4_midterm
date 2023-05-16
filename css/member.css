@@ -26,3 +26,6 @@
   opacity: 1;
   font-size: 100px;
 }
+.error {
+  color: red;
+}

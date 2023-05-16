@@ -2,6 +2,7 @@
 $pageName = 'member';
 $subPageName = 'member_list';
 $title = '會員列表';
+
 include './parts/html-head.php';
 include './parts/html-navbar.php';
 include './parts/db-connect.php'; ?>
@@ -173,13 +174,12 @@ ORDER BY
                                 <div class="btn-group">
                                     <!-- <a href="#" class="btn btn-sm btn-outline-dark">
                                         編輯 <i class="bi bi-pen"></i></a> -->
-                                    <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <!-- <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                         操作
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <!-- <li><a class="dropdown-item" href="javascript:openUpdateModal">修改狀態</a></li> -->
-                                        <li><a class="dropdown-item text-info" href="" data-bs-toggle="modal" data-bs-target="#updateModal" data-bs-member-id="<?= $r['sid'] ?>" data-bs-member-email="<?= $r['email'] ?>" data-bs-member-name="<?= $r['name'] ?>" data-bs-member-birth="<?= $r['birth'] ?>" data-bs-member-address="<?= $r['address'] ?>" data-bs-member-sex="<?= $r['sex'] ?>" data-bs-member-heroicon="<?= $r['hero_icon'] ?>" data-bs-member-tier="<?= $r['tier'] ?>" data-bs-member-role="<?= $r['role'] ?>" data-bs-member-active="<?= $r['active'] == 1 ? "已啟用" : "未啟用" ?>">修改狀態</a></li>
-                                        <li><a class="dropdown-item text-danger" href="" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-member-id="<?= $r['sid'] ?>">刪除</a></li>
+                                    </button> -->
+
+                                    <a class="dropdown-item text-info" href="./member_update.php?sid=<?= $r['sid'] ?>">修改狀態</a></li>
+                                    <a class="dropdown-item text-danger" href="" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-member-id="<?= $r['sid'] ?>">刪除</a></li>
                                     </ul>
                                 </div>
                             </td>
@@ -318,7 +318,8 @@ ORDER BY
         (function() {
             const tbody = document.querySelector('[data-tbody]');
             const tdCheckbox = document.querySelectorAll('td input[checkbox]:checked')
-            console.log(tdCheckbox)
+            // console.log(tdCheckbox)
+            let updateObj = {}
             tbody.addEventListener('wheel', (e) => {
                 if (e.target.classList.contains('member-address') || e.target.classList.contains('member-created_at')) {
                     if (e.deltaY == 0) return;
@@ -372,6 +373,7 @@ ORDER BY
                 modalRoleInput.value = memberRole
                 const modalActiveInput = modalByUpdate.querySelector('#activeInput')
                 modalActiveInput.value = memberActive
+
             })
             const deleteBtn = document.querySelector('#deleteModal button.btn.btn-danger')
             deleteBtn.addEventListener('click', () => {
@@ -406,10 +408,13 @@ ORDER BY
                 })
 
             })
-            const updateBtn = document.querySelector('#updateModal button.btn.btn-info')
-            updateBtn.addEventListener('click', () => {
-                console.log('work')
-            })
+            // const updateBtn = document.querySelector('#updateModal button.btn.btn-info')
+            // updateBtn.addEventListener('click', () => {
+            //     fetch("./member_update.php", {
+            //         method: 'POST',
+
+            //     })
+            // })
         })()
     </script>
 </div>
