@@ -6,8 +6,8 @@ include './parts/db-connect.php';
 $perPage = 5;
 $pagePerSide = 4; //pages pers side on the pagniation
 $pageName = 'record';
-$title = 'record_codition';
-$data = 'record_condition'; // name of the table
+$title = 'record_exercise_record';
+$data = 'record_exercise_record';
 ?>
 <link rel="stylesheet" href="./css/sean.css">
 
@@ -21,10 +21,12 @@ if ($page < 1) {
 
 // $tot_sql = "SELECT COUNT(1) FROM $data";
 $tot_sql = "SELECT COUNT(1)
-FROM `record_condition` rc
-JOIN `member` m ON rc.member_sid = m.sid AND m.active='1'";
+FROM $data db
+JOIN `member` m ON db.member_sid = m.sid AND m.active='1'";
 $tot_row =  $pdo->query($tot_sql)->fetch(PDO::FETCH_NUM)[0]; // total number of data
 $totPages = ceil($tot_row / $perPage);
+// echo $totPages;
+// exit;
 
 $rows = [];
 if ($tot_row) {
@@ -35,16 +37,18 @@ if ($tot_row) {
 
     // $sql = sprintf("SELECT * FROM address_book LIMIT %s, %s", ($page - 1) * $perPage, $perPage);
     $sql = sprintf(
-        "SELECT rc.sid, m.name, ms.name AS `sex`, m.birth, rc.height, rc.weight, rc.bodyfat, rc.record_time
-        FROM `record_condition` rc
-        JOIN `member` m ON rc.member_sid = m.sid AND m.active='1'
-        JOIN `member_sex` ms ON m.sex_sid=ms.sid
-        ORDER BY rc.record_time DESC LIMIT %s, %s",
+        "SELECT er.sid, m.name, et.sid AS exeSid, et.exercise_name, er.weight, er.sets, er.reps, er.exe_date
+        FROM `record_exercise_record` er
+        JOIN `member` m ON er.member_sid = m.sid AND m.active='1'
+        JOIN `record_exercise_type` et ON er.exe_type_sid = et.sid
+        ORDER BY er.exe_date DESC LIMIT %s, %s",
         ($page - 1) * $perPage,
         $perPage
     );
     $rows = $pdo->query($sql)->fetchAll();
 }
+// print_r($rows);
+// exit;
 
 // ========================================================
 
@@ -73,7 +77,6 @@ if ($tot_row) {
             <input type="search" class="form-control border-0 shadow-none">
         </div>
     </div>
-
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -82,13 +85,12 @@ if ($tot_row) {
                         <th scope="col" class="ps-4">
                             <input type="checkbox" class="form-check-input">
                         </th>
-                        <th scope="col" class="py-3 ">會員編號</th>
+                        <th scope="col" class="py-3 ">紀錄編號</th>
                         <th scope="col">姓名</th>
-                        <th scope="col">性別</th>
-                        <th scope="col">生日</th>
-                        <th scope="col">身高</th>
-                        <th scope="col">體重</th>
-                        <th scope="col">體脂肪率</th>
+                        <th scope="col">運動類型</th>
+                        <th scope="col">重量</th>
+                        <th scope="col">組數</th>
+                        <th scope="col">次數</th>
                         <th scope="col">紀錄時間</th>
                         <th scope="col" class="pe-4">編輯</th>
                     </tr>
@@ -96,6 +98,7 @@ if ($tot_row) {
                 <tbody class="text-nowrap">
                     <?php foreach ($rows as $r) : ?>
                         <tr>
+                            <!-- er.sid, m.name, et.exercise_name, er.weight, er.sets, er.reps, er.exe_date -->
                             <td class="ps-4">
                                 <input type="checkbox" class="form-check-input">
                             </td>
@@ -106,22 +109,19 @@ if ($tot_row) {
                                 <div><?= $r['name'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['sex'] ?></div>
-                            </td>
-                            <td>
-                                <div><?= $r['birth'] ?></div>
-                            </td>
-                            <td>
-                                <div><?= $r['height'] ?></div>
+                                <div><?= $r['exercise_name'] ?></div>
                             </td>
                             <td>
                                 <div><?= $r['weight'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['bodyfat'] ?></div>
+                                <div><?= $r['sets'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['record_time'] ?></div>
+                                <div><?= $r['reps'] ?></div>
+                            </td>
+                            <td>
+                                <div><?= $r['exe_date'] ?></div>
                             </td>
                             <td class="pe-4">
                                 <div class="btn-group">
@@ -139,7 +139,7 @@ if ($tot_row) {
     <!-- pagination -->
     <?php include "./parts/html-pagination.php" ?>
     <!-- Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -164,6 +164,15 @@ if ($tot_row) {
         <div class="add-form add-form-toggle table-responsive ms-3 me-3">
             <table class="table table-hover mb-0">
 
+                <th scope="col">姓名</th>
+                <th scope="col">運動類型</th>
+                <th scope="col">重量</th>
+                <th scope="col">組數</th>
+                <th scope="col">次數</th>
+                <th scope="col">紀錄時間</th>
+
+
+
                 <tbody class="text-nowrap">
                     <tr>
                         <td>
@@ -174,20 +183,26 @@ if ($tot_row) {
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">身高</label>
-                                <input type="email" class="form-control" name="height" id="height" placeholder="183">
+                                <label for="memberSid" class="form-label">exercise ID</label>
+                                <input type="email" class="form-control" name="exeSid" id="exeSid" placeholder="183">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">體重</label>
+                                <label for="memberSid" class="form-label">重量</label>
                                 <input type="email" class="form-control" name="weight" id="weight" placeholder="99">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">體脂肪率</label>
-                                <input type="email" class="form-control" name="bodyfat" id="bodyfat" placeholder="5">
+                                <label for="memberSid" class="form-label">組數</label>
+                                <input type="email" class="form-control" name="sets" id="sets" placeholder="5">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="memberSid" class="form-label">次數</label>
+                                <input type="email" class="form-control" name="reps" id="reps" placeholder="12">
                             </div>
                         </td>
                         <td>
@@ -200,7 +215,7 @@ if ($tot_row) {
                 </tbody>
             </table>
             <div class="col-12">
-                <button class="formBtn btn btn-primary" type="button" onclick="addData(event)" data-add-api="./api/record-condition-add-api.php">Submit form</button>
+                <button class="formBtn btn btn-primary" type="button" onclick="addData(event)" data-add-api="./api/record-exercise-rec-add-api.php">Submit form</button>
             </div>
 
         </div>
@@ -208,7 +223,6 @@ if ($tot_row) {
     <!-- end === add data === -->
 
 </div>
-
 <?php
 include './parts/html-navbar-end.php'; ?>
 <?php
