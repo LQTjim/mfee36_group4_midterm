@@ -23,7 +23,8 @@ if (empty($r)) {
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">新增資料</h5>
-                <form name="formadd" onsubmit="checkForm(event)">
+                <form name="formedit" onsubmit="checkForm(event)">
+                    <input type="number" hidden name="sid" value="<?= htmlentities($r['sid']) ?>">
                     <div class="mb-3">
                         <label for="member_sid" class="form-label">會員編號</label>
                         <input type="text" class="form-control" id="member_sid" name="member_sid" value="<?= htmlentities($r['member_sid']) ?>">
@@ -68,7 +69,7 @@ if (empty($r)) {
 <script>
     function checkForm(event) {
         event.preventDefault();
-        const fd = new FormData(document.formadd); //純資料
+        const fd = new FormData(document.formedit); //純資料
 
         fetch('./api/order_cart_edit_api.php', {
                 method: "post",
@@ -83,9 +84,8 @@ if (empty($r)) {
                     showConfirmButton: false,
                 });
                 setTimeout(() => {
-                    history.go(-1)
+                    // history.go(-1)
                 }, 2000)
-                // window.alert('新增成功')
             })
             .catch(ex => {
                 console.log(ex)

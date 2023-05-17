@@ -59,7 +59,7 @@ $title = 'add'
         event.preventDefault();
         const fd = new FormData(document.formadd); //純資料
 
-        fetch('./api/order_cart_edit_api.php', {
+        fetch('./api/order_cart_add_api.php', {
                 method: "POST",
                 body: fd,
             }).then(r => r.text())

@@ -11,6 +11,7 @@ $output = [
 if (!empty($_POST['sid'])) {
 
     $isPass = true;
+
     // $member_sid = trim($_POST['member_sid']);
     // $member_sid = filter_var($member_sid, FILTER_VALIDATE_INT);
     // if(empty($member_sid)){
@@ -27,25 +28,27 @@ SET
 `price`=?, 
 `quantity`=?, 
 `amount`=?, 
-`created_at`=NOW(),
-WHERE `sid` = ?";
+`created_at`=NOW()
+WHERE `sid` =?";
 
     $stmt_input = $pdo->prepare($sql_input);
+    $sid = intval($_POST['sid']);
 
     if ($isPass) {
         $stmt_input->execute([
             $_POST['member_sid'],
-            $_POST['product_type_sid'],
+            $_POST['products_type_sid'],
             $_POST['item_sid'],
             $_POST['price'],
             $_POST['quantity'],
             $_POST['amount'],
-            $_POST['sid']
+            $sid
         ]);
     }
 }
 
 header('conten-type: application/json');
+echo json_encode($output, JSON_UNESCAPED_UNICODE)
 // header('Location: ../index_.php');
 
 // header('Location: ../login.php');
