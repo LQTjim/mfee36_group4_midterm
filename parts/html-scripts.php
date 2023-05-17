@@ -18,4 +18,18 @@
     //     evt.preventDefault();
     //     body.classList.toggle('sidebar-toggled');
     // });
+
+    //=== add by Sean ==============================================================
+
+    // const description = document.querySelectorAll("div.sean_description");
+    // description.forEach(
+    //     (ele) => {
+    //         ele.addEventListener('click', e => {
+    //             e.target.classList.toggle('sean_ellipsis');
+    //             // console.log(e.target);
+    //         })
+    //     }
+    // )
+
+    //==============================================================================
 </script>
