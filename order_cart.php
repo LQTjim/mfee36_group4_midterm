@@ -55,41 +55,46 @@ endif;
 
 <div class="container">
     <!-- 上方分頁紐 -->
-    <div class="row">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
+    <div class="d-flex">
+        <div class="row me-auto">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
 
-                <!-- page begining and page-1 -->
-                <li class="page-item"><a class="page-link <?= ($page == 1) ? 'disabled' : '' ?>" href="?page=<?= 1 ?>">
-                        <i class="fa-solid fa-angles-left"></i>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link <?= ($page == 1) ? 'disabled' : '' ?>" href=" ?page=<?= $page - 1 ?>">
-                        <i class="fa-solid fa-angle-left"></i></a>
-                </li>
+                    <!-- page begining and page-1 -->
+                    <li class="page-item"><a class="page-link <?= ($page == 1) ? 'disabled' : '' ?>" href="?page=<?= 1 ?>">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link <?= ($page == 1) ? 'disabled' : '' ?>" href=" ?page=<?= $page - 1 ?>">
+                            <i class="fa-solid fa-angle-left"></i></a>
+                    </li>
 
-                <!-- page button -->
-                <?php for ($i = $page - 5; $i <= $page + 5; $i++) :
-                    if ($i >= 1 and $i <= $totalPage) : ?>
-                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                            <?php if ($i == $page) : ?>
-                                <span class="page-link" href="?page=<?= $i ?>"><?= $i ?></span>
-                            <?php else : ?>
-                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                            <?php endif; ?>
-                        </li>
-                <?php endif;
-                endfor ?>
+                    <!-- page button -->
+                    <?php for ($i = $page - 5; $i <= $page + 5; $i++) :
+                        if ($i >= 1 and $i <= $totalPage) : ?>
+                            <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                                <?php if ($i == $page) : ?>
+                                    <span class="page-link" href="?page=<?= $i ?>"><?= $i ?></span>
+                                <?php else : ?>
+                                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                <?php endif; ?>
+                            </li>
+                    <?php endif;
+                    endfor ?>
 
-                <!-- page+1 and page end -->
-                <li class="page-item"><a class="page-link <?= ($page == $totalPage) ? 'disabled' : '' ?>" href="?page=<?= $page + 1 ?>">
-                        <i class="fa-solid fa-angle-right"></i></a>
-                </li>
-                <li class="page-item"><a class="page-link <?= ($page == $totalPage) ? 'disabled' : '' ?>" href="?page=<?= $totalPage ?>">
-                        <i class="fa-solid fa-angles-right"></i></a>
-                </li>
-            </ul>
-        </nav>
+                    <!-- page+1 and page end -->
+                    <li class="page-item"><a class="page-link <?= ($page == $totalPage) ? 'disabled' : '' ?>" href="?page=<?= $page + 1 ?>">
+                            <i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                    <li class="page-item"><a class="page-link <?= ($page == $totalPage) ? 'disabled' : '' ?>" href="?page=<?= $totalPage ?>">
+                            <i class="fa-solid fa-angles-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" onclick="window.location='order_add.php'">新增</button>
+        </div>
     </div>
 
     <!-- 主介面 -->
@@ -105,14 +110,14 @@ endif;
                     <th>單價(NTD)</th>
                     <th>數量</th>
                     <th>小計(NTD)</th>
-                    <th></th>加入購物車時間</th>
+                    <th>加入購物車時間</th>
                     <th>刪除</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($rows_order_cart as $r) : ?><a href=></a>
                     <tr>
-                        <td><a href=""><i class=" fa-solid fa-pen-to-square"></i></a></td>
+                        <td><a href="javascript: editCart(<?= $r["sid"] ?>)"><i class=" fa-solid fa-pen-to-square"></i></a></td>
                         <td><?= $r['sid'] ?></td>
                         <td><?= $r['member_sid'] ?></td>
                         <td><?= $r['name'] ?></td>
@@ -121,8 +126,7 @@ endif;
                         <td><?= $r['quantity'] ?></td>
                         <td><?= $r['amount'] ?></td>
                         <td><?= $r['created_at'] ?></td>
-                        <td><a href="./api/order_cart_delete.php?sid=<?= $r['sid'] ?>"><i class="fa-solid fa-trash"></i></a></td>
-
+                        <td><a href="javascript: deleteCart(<?= $r['sid'] ?>)"><i class="fa-solid fa-trash"></i></a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -164,8 +168,35 @@ endif;
         </ul>
     </nav>
 </div>
+<!-- 
+<div>
+    <button class="demo1">
+        demo1
+    </button>
+</div> -->
+<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+
 <script>
-    // document.querySelector('#pageNow').removeAttribute('href');
+    // document.querySelector('.demo1').addEventListener('click', 
+    // function deleteCart(sid) {
+    //     swal({
+    //         title: "確定要刪除嗎?",
+    //         icon: `要刪除為這筆資料嗎?`,
+    //         buttons: true,
+    //         dangerMode: true
+    //     });
+    // };
+    function editCart(sid) {
+        if (confirm('編輯嗎?')) {
+            location.href = ' ./order_cart_edit.php?sid=' + sid;
+        }
+    }
+
+    function deleteCart(sid) {
+        if (confirm('刪除嗎?')) {
+            location.href = ' ./api/order_cart_delete.php?sid=' + sid;
+        }
+    }
 </script>
 
 <?php include "./parts/html-navbar-end.php"; ?>
