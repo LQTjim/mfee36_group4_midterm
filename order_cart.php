@@ -97,22 +97,22 @@ endif;
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="delete">編輯</th>
-                    <th scope="col">編號</th>
-                    <th scope="col">會員編號</th>
-                    <th scope="col">會員姓名</th>
-                    <th scope="col">產品類型(編號)</th>
-                    <th scope="col">單價(NTD)</th>
-                    <th scope="col">數量</th>
-                    <th scope="col">小計(NTD)</th>
-                    <th scope="col">加入購物車時間</th>
-                    <th scope="delete">刪除</th>
+                    <th>編輯</th>
+                    <th>編號</th>
+                    <th>會員編號</th>
+                    <th>會員姓名</th>
+                    <th>產品類型(編號)</th>
+                    <th>單價(NTD)</th>
+                    <th>數量</th>
+                    <th>小計(NTD)</th>
+                    <th></th>加入購物車時間</th>
+                    <th>刪除</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($rows_order_cart as $r) : ?>
+                <?php foreach ($rows_order_cart as $r) : ?><a href=></a>
                     <tr>
-                        <td><a href=""><i class="fa-solid fa-pen-to-square"></i></a></td>
+                        <td><a href=""><i class=" fa-solid fa-pen-to-square"></i></a></td>
                         <td><?= $r['sid'] ?></td>
                         <td><?= $r['member_sid'] ?></td>
                         <td><?= $r['name'] ?></td>
@@ -121,7 +121,7 @@ endif;
                         <td><?= $r['quantity'] ?></td>
                         <td><?= $r['amount'] ?></td>
                         <td><?= $r['created_at'] ?></td>
-                        <td><a href=""><i class="fa-solid fa-trash"></i></a></td>
+                        <td><a href="./api/order_cart_delete.php?sid=<?= $r['sid'] ?>"><i class="fa-solid fa-trash"></i></a></td>
 
                     </tr>
                 <?php endforeach; ?>
