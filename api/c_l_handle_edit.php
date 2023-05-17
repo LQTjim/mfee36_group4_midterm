@@ -16,10 +16,11 @@
         'date' => 'EditData',
         'experience' => 'EditData',
         'introduction' => 'EditData',
+        'certification' => 'EditCerti',
     ] ;
 
     if(empty($_POST['type'])) quit() ;
-
+    
     $type_gate[$_POST['type']]() ;
 
     function EditData() {
@@ -40,6 +41,7 @@
 
             'experience' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}'
                               WHERE `sid` = {$_POST['sid']} ",
+
             'introduction' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}'
                               WHERE `sid` = {$_POST['sid']} ",
         ] ;
@@ -49,6 +51,40 @@
         $statment = $pdo->query($sql) ;
     
         $output['success'] = !! $statment->rowCount() ;
+    
+        quit() ;
+    }
+
+    function EditCerti() {
+        global $pdo, $output;
+
+        $table_name = 'c_l_rela_coach_certification' ;
+
+        $sql = "SELECT * FROM `{$table_name}` WHERE `coach_sid` = {$_POST['sid']}" ;
+
+        if(!! $pdo->query($sql)->rowCount()) {
+            $rm_sql = "DELETE FROM `{$table_name}` WHERE `coach_sid` = {$_POST['sid']}" ;
+            $rm_stm = $pdo->query($rm_sql) ;
+
+            $output['success'] = !! $rm_stm->rowCount() ;
+
+            if(!$output['success']) quit('deleted fail') ;
+        }
+
+        if(empty($_POST['data'])) quit() ;
+
+        $certis = explode(",", $_POST['data']) ;
+
+        foreach($certis as $certi) {
+
+            $add_sql = "INSERT INTO `{$table_name}` ( `coach_sid`, `certification_sid` ) 
+                        VALUES ( {$_POST['sid']}, {$certi} )"
+            ;
+
+            $add_stm = $pdo->query($add_sql) ;
+        }
+    
+        $output['success'] = !! $add_stm->rowCount() ;
     
         quit() ;
     }
