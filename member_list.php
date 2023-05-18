@@ -15,6 +15,13 @@ if ($page < 1) {
     exit;
 }
 $query = isset($_GET['query']) ? $_GET['query'] : '';
+$sort = 'ORDER BY `m`.`sid` DESC';
+if (isset($_GET['sort'])) {
+    global $sort;
+    $sort = $_GET['sort'] == 'MASC' ? 'ORDER BY `m`.`sid` ASC' : $sort;
+    $sort = $_GET['sort'] == 'CASC' ? 'ORDER BY `m`.`birth` ASC' : $sort;
+    $sort = $_GET['sort'] == 'CDESC' ? 'ORDER BY `m`.`birth` DESC' : $sort;
+}
 $t_sql = "SELECT COUNT(1) FROM `member` WHERE `name` LIKE '%$query%'";
 $totalRows = $pdo->query($t_sql)->fetch(PDO::FETCH_NUM)[0]; # 總筆數
 $totalPages = ceil($totalRows / $perPage); # 總頁數
@@ -50,10 +57,14 @@ LEFT JOIN `member_sex` ms ON m.sex_sid = ms.sid
 LEFT JOIN `member_level` ml ON m.`member_level_sid` = ml.sid
 LEFT JOIN `member_role` mr ON m.`role_sid` = mr.sid 
 WHERE m.name LIKE '%%%s%%'
-ORDER BY
-`m`.`sid` DESC LIMIT %s, %s", $query, ($page - 1) * $perPage, $perPage);
+%s LIMIT %s, %s", $query, $sort, ($page - 1) * $perPage, $perPage);
     $rows = $pdo->query($sql)->fetchAll();
 }
+$qStr = (isset($_GET['query']) ? '&query=' . $_GET['query'] : "");
+$sStr = (isset($_GET['sort']) ? '&sort=' . $_GET['sort'] : '');
+$qsStr = $qStr . $sStr;
+$rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
+
 ?>
 <link rel="stylesheet" href="./css/member.css">
 <div>
@@ -66,12 +77,12 @@ ORDER BY
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-end mb-0">
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=1<?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=1<?= $qsStr ?>">
                         <i class="fa-solid fa-angles-left"></i>
                     </a>
                 </li>
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=<?= $page - 1 ?><?= $qsStr ?>">
                         <i class="fa-solid fa-angle-left"></i>
                     </a>
                 </li>
@@ -79,17 +90,17 @@ ORDER BY
                     if ($i >= 1 and $i <= $totalPages) :
                 ?>
                         <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>"><?= $i ?></a>
+                            <a class="page-link" href="?page=<?= $i ?><?= $qsStr ?>"><?= $i ?></a>
                         </li>
                 <?php endif;
                 endfor; ?>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=<?= $page + 1 ?><?= $qsStr ?>">
                         <i class="fa-solid fa-angle-right"></i>
                     </a>
                 </li>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $totalPages ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=<?= $totalPages ?><?= $qsStr ?>">
                         <i class="fa-solid fa-angles-right"></i>
                     </a>
                 </li>
@@ -101,12 +112,13 @@ ORDER BY
         <div class="input-group">
             <div class="dropdown">
                 <button class="btn btn-outline-dark dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    依姓名
+                    選擇排序
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">依姓名</a></li>
-                    <li><a class="dropdown-item" href="#">依生日</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?>&sort=MASC<?= $qStr ?>">依編號小至大</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?><?= $qStr ?>">依編號大至小</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?>&sort=CASC<?= $qStr ?>">依生日大至小</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?>&sort=CDESC<?= $qStr ?>">依生日小至大</a></li>
                 </ul>
             </div>
             <span class="input-group-text border-0 bg-transparent pe-0">
@@ -391,7 +403,7 @@ ORDER BY
                                 showConfirmButton: false
                             })
                             setTimeout(() => {
-                                location.href = `/mfee36_group4_midterm/member_list.php?page=<?= $page ?>`
+                                location.href = `<?= $rHref ?>`
                             }, 1500)
                         }
 
@@ -432,7 +444,7 @@ ORDER BY
                                 showConfirmButton: false
                             })
                             setTimeout(() => {
-                                location.href = `/mfee36_group4_midterm/member_list.php?page=<?= $page ?>`
+                                location.href = `<?= $rHref ?>`
                             }, 1500)
                         }
 

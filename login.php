@@ -16,7 +16,7 @@ if (isset($_SESSION['admin'])) {
                 </div>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
-                        <h1 class="fs-4 card-title fw-bold mb-4 text-center login-title">G4後台登入</h1>
+                        <h1 class="fs-4 card-title fw-bold mb-4 text-center login-title">健身堡壘後台登入</h1>
                         <form class="needs-validation login-form" novalidate="" name="login">
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="email">E-mail</label>

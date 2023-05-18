@@ -99,15 +99,7 @@ include './parts/html-navbar.php';
                 el.nextElementSibling.classList.remove('error');
                 el.nextElementSibling.innerText = ""
             })
-            //check not null
-            document.querySelectorAll('input').forEach((el) => {
-                if (el.value.trim() === "") {
-                    validation = false
-                    el.nextElementSibling.classList.add('error');
-                    el.nextElementSibling.innerText = "不得為空"
 
-                }
-            })
             const reg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
             const emailInputs = document.querySelectorAll('input[name="email[]"]')
             emailInputs.forEach((el) => {
@@ -115,6 +107,14 @@ include './parts/html-navbar.php';
                     validation = false
                     el.nextElementSibling.classList.add('error');
                     el.nextElementSibling.innerText = "EMAIL格式錯誤"
+                }
+            }) //check not null
+            document.querySelectorAll('input').forEach((el) => {
+                if (el.value.trim() === "") {
+                    validation = false
+                    el.nextElementSibling.classList.add('error');
+                    el.nextElementSibling.innerText = "不得為空"
+
                 }
             })
             if (validation) {
