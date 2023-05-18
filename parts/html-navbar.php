@@ -8,10 +8,9 @@ include './parts/admin-required.php';
 <div class="d-flex ">
   <aside class="nav-aside sidebar vh-100 border-end d-flex bg-white flex-column">
     <!-- 1. 後台名稱 -->
-
-    <div class="px-4 bg-primary py-4 text-light fw-bold">
-      <strong>Group4</strong>
-      - 後台管理
+    <div class="pe-4 bg-primary py-4 text-light text-center fw-bold">
+      <img class="rounded-circle" style="width: 50px;height:50px;z-index:10000;" src="./assets/img/icon.png" alt="" />
+      <strong class="fs-5">健身堡壘</strong>
     </div>
     <!-- 2. 選單 -->
     <div class="overflow-auto">
@@ -38,6 +37,9 @@ include './parts/admin-required.php';
           </a>
           <a href="./member_add.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_add' ? 'active' : '' ?>">
             新增會員
+          </a>
+          <a href="./member_chart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_chart' ? 'active' : '' ?>">
+            會員分析
           </a>
         </div>
       </div>
@@ -126,15 +128,6 @@ include './parts/admin-required.php';
         <div class="collapse" id="order_cart" role="button">
           <a href="./order_cart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             購物車
-          </a>
-          <a href="./order_main.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
-            歷史訂單
-          </a>
-          <a href="./order_detail.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
-            歷史訂單詳細資訊
-          </a>
-          <a href="./order_blank.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
-            blank
           </a>
         </div>
       </div>
