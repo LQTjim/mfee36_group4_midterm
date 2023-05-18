@@ -147,7 +147,7 @@
                         <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>,'<?= $row['name'] ?>')">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
-                        <button class="me-2 btn btn-secondary" type="button">課程列表
+                        <button class="me-2 btn btn-secondary" type="button" onclick="window.location='coach_score_chart.php'">教練評分
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="ms-auto btn btn-dark" type="button" onclick="handleDelete(<?= $row['sid'] ?>)">

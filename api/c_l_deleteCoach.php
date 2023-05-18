@@ -10,7 +10,6 @@
 
     if(!isset($_GET)) quit() ;
     if(empty($_GET)) quit() ;
-    if($_GET['id'] != 9) quit('not 9') ;
 
     $sid = intval($_GET['id']) ;
     $d_sql = "DELETE FROM `c_l_coach` WHERE `sid` = {$sid}" ;

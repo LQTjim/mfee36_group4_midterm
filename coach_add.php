@@ -163,7 +163,9 @@
         if(card_hide) {
             SearchMember(document.getElementById('search_id').value)
             return false
-        } 
+        }
+        
+        if(document.getElementById('introduction').value.length < 8) return SwalAlert('自我介紹不得少於8個字')
         
         LoadingModal.fire()
 
@@ -257,6 +259,20 @@
         // let certi_modal = document.getElementById('certi_modal');
         // certi_modal.removeAttribute('data-sid');
         certi_modal.close();
+    }
+
+    function SwalAlert(message) {
+        Swal.fire({
+            titleText: message,
+            icon: 'warning',
+            showCancelButton: false,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'c_l_progressBar'
+            },
+        })
     }
 
 </script>
