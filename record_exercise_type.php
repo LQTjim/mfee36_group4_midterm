@@ -1,11 +1,11 @@
 <?php
+$pageName = 'record';
 include './parts/html-head.php';
 include './parts/html-navbar.php';
 include './parts/db-connect.php';
 
 $perPage = 5;
 $pagePerSide = 4; //pages pers side on the pagniation
-$pageName = 'record';
 $title = 'record_exercise_type';
 $data = 'record_exercise_type';
 $addApi = './api/record-exercise-type-add-api.php';

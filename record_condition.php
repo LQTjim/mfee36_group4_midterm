@@ -6,12 +6,13 @@ include './parts/db-connect.php';
 
 $perPage = 5;
 $pagePerSide = 4; //pages pers side on the pagniation
-
 $title = 'record_codition';
 $data = 'record_condition'; // name of the table
 $addApi = "./api/record-condition-add-api.php";
 ?>
 <link rel="stylesheet" href="./css/sean.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <?php
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // if no specify page, then go to first page
@@ -49,9 +50,36 @@ if ($tot_row) {
     $rows = $pdo->query($sql)->fetchAll();
 }
 
-// ========================================================
+// === bar chart ===
 
+$sql_barChart = sprintf("SELECT rc.member_sid, m.name,
+COUNT(rc.member_sid) AS freq
+FROM `record_condition` rc
+JOIN `member` m ON rc.member_sid = m.sid
+GROUP BY rc.member_sid
+ORDER BY freq DESC
+LIMIT 5;
+");
+
+$bar_rows = $pdo->query($sql_barChart)->fetchAll();
+
+$fID = [];
+$fData = [];
+
+foreach ($bar_rows as $b) {
+    // $fID[] = intval($b['member_sid']);
+    $fID[] = $b['name'];
+    $fData[] = intval($b['freq']);
+}
+// ========================================================
 ?>
+
+<div class="">
+    <canvas id="bar-chart" class=""></canvas>
+</div>
+
+<!-- end barchart =============================================== -->
+
 <div class="card shadow-sm">
     <div class="card-header bg-transparent">
         <div class="input-group">
@@ -216,8 +244,45 @@ if ($tot_row) {
         </div>
     </form>
     <!-- end === add data === -->
-
 </div>
+
+<script>
+    const barCtx = document.querySelector("#bar-chart").getContext('2d');
+    const barConfig = {
+        type: 'bar',
+        data: {
+            datasets: [{
+                data: <?= json_encode($fData) ?>,
+                label: '活躍用戶'
+            }],
+            labels: <?= json_encode($fID) ?>
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, ticks) {
+                            return value;
+                        }
+                    }
+                },
+                // x: {
+                //     ticks: {
+                //         // Include a dollar sign in the ticks
+                //         callback: function(value, index, ticks) {
+                //             return value;
+                //         }
+                //     }
+                // }
+            }
+
+
+        }
+    };
+    const barChart = new Chart(barCtx, barConfig);
+</script>
 
 <?php
 include './parts/html-navbar-end.php'; ?>
