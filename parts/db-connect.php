@@ -1,7 +1,7 @@
 <?php
 // require './parts/db-connect-local-config.php';
-$db_host = 'localhost';
-// $db_host = 'localhost:8889'; #TODO
+// $db_host = 'localhost';
+$db_host = 'localhost:8889'; #TODO
 $db_name = 'mfee_36_group_4';
 $db_user = 'root';
 $db_pass = 'root';
