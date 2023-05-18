@@ -177,13 +177,6 @@
     </div>
 </dialog>
 
-<dialog id="newcoach_modal">
-    <div class="text-center">
-        <button class="btn btn-primary me-2" onclick="">新增</button>
-        <button class="btn btn-secondary" onclick="CloseCertiModal()">取消</button>
-    </div>
-</dialog>
-
 <script>
 
     const LoadingModal = Swal.mixin({
@@ -267,7 +260,7 @@
         }
         monitor.appendChild(moni_frag)
 
-        for (let item of items['data']) {
+        for (let item of items['own']) {
             let div = document.createElement('div')
             div.classList.add('modal_item')
             div.textContent = item['name']
@@ -291,8 +284,6 @@
             element.setAttribute('data-own', '')
             modalBody.appendChild(element)
         }
-
-        // console.log(data)
     }
 
     function CloseCertiModal() {

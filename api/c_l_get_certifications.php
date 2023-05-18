@@ -5,12 +5,21 @@
     $output = [
         'success' => false,
         'get' => $_GET,
-        'data' => [],
+        'own' => [],
         'error' => [],
         'all' => []
     ];
 
-    if(empty($_GET['id'])) quit() ;
+    if(empty($_GET['id'])) {
+        $all_sql = "SELECT * FROM `c_l_certification`" ;
+        $statment = $pdo->query($all_sql) ;
+        
+        $rows = $statment->fetchAll() ;
+        $output['sussecc'] = !! $statment->rowCount() ;
+        $output['all'] = $rows ;
+
+        quit() ;
+    }
 
     $own_sql = "SELECT `name`, `certification_sid` FROM `c_l_certification` AS certi 
                 JOIN `c_l_rela_coach_certification` AS rela ON rela.coach_sid = {$_GET['id']}
@@ -38,7 +47,7 @@
     $n_rows = $n_statment->fetchAll() ;
 
     $output['success'] = (!!$statment->rowCount() && !!$n_statment->rowCount()) ;
-    $output['data'] = $rows ;
+    $output['own'] = $rows ;
     $output['all'] = $n_rows ;
 
     quit() ;

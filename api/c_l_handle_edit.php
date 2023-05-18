@@ -6,7 +6,8 @@
         'success' => false,
         'post' => $_POST,
         'files' => $_FILES,
-        'error' => []
+        'error' => [],
+        'test' => [],
     ];
 
     $type_gate = [
@@ -61,31 +62,54 @@
         $table_name = 'c_l_rela_coach_certification' ;
 
         $sql = "SELECT * FROM `{$table_name}` WHERE `coach_sid` = {$_POST['sid']}" ;
+        $statment = $pdo->query($sql) ;
+        $old_row = $statment->fetchAll() ;
 
-        if(!! $pdo->query($sql)->rowCount()) {
-            $rm_sql = "DELETE FROM `{$table_name}` WHERE `coach_sid` = {$_POST['sid']}" ;
-            $rm_stm = $pdo->query($rm_sql) ;
-
-            $output['success'] = !! $rm_stm->rowCount() ;
-
-            if(!$output['success']) quit('deleted fail') ;
+        $old_certis = [] ;
+        foreach($old_row as $certi) {
+            $old_certis[] = $certi['certification_sid'] ;
         }
 
-        if(empty($_POST['data'])) quit() ;
+        $new_certis = empty($_POST['data']) ? [] : explode(",", $_POST['data']) ;
 
-        $certis = explode(",", $_POST['data']) ;
+        foreach($old_certis as $old_key => $certi) {
+            $new_key = array_search($certi, $new_certis) ;
 
-        foreach($certis as $certi) {
-
-            $add_sql = "INSERT INTO `{$table_name}` ( `coach_sid`, `certification_sid` ) 
-                        VALUES ( {$_POST['sid']}, {$certi} )"
-            ;
-
-            $add_stm = $pdo->query($add_sql) ;
+            if($new_key !== false) {
+                unset($new_certis[$new_key]) ;
+                unset($old_certis[$old_key]) ;
+            }
         }
+
+        if(!empty($old_certis)) {
+            foreach( $old_certis as $certi ) {
+                $sid = intval($certi) ;
+                $rm_sql = " DELETE FROM `{$table_name}` 
+                            WHERE `certification_sid` = {$sid} 
+                            AND `coach_sid` = {$_POST['sid']} "
+                ;
+                $rm_stm = $pdo->query($rm_sql) ;
     
-        $output['success'] = !! $add_stm->rowCount() ;
+                $output['success'] = !! $rm_stm->rowCount() ;
+                if(!$output['success']) quit('deleted fail') ;
+            }
+        }
+
+        if(!empty($new_certis)) {
+            foreach($new_certis as $certi) {
+                $sid = intval($certi) ;
+                $add_sql = "INSERT INTO `{$table_name}` 
+                            ( `coach_sid`, `certification_sid` ) 
+                            VALUES ( {$_POST['sid']}, {$sid} )"
+                ;
     
+                $add_stm = $pdo->query($add_sql) ;
+
+                $output['success'] = !! $add_stm->rowCount() ;
+                if(!$output['success']) quit('added fail') ;
+            }
+        }
+
         quit() ;
     }
 
