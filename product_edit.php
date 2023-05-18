@@ -4,7 +4,7 @@ $title = '編輯';
 require './parts/db-connect.php';
 
 $sid = isset($_GET['sid']) ? intval($_GET['sid']) : 0;
-$sql = "SELECT * FROM product_name WHERE sid={$sid}";
+$sql = "SELECT * FROM product_name WHERE sid= {$sid}";
 
 $r = $pdo->query($sql)->fetch();
 if (empty($r)) {
@@ -35,28 +35,13 @@ if (empty($r)) {
                     <form name="form1" onsubmit="checkForm(event)">
                         <input type="hidden" name="sid" value="<?= $r['sid'] ?>">
                         <div class="mb-3">
-                            <label for="name" class="form-label">* name</label>
-                            <input type="text" class="form-control" id="name" name="name" data-required="1" value="<?= htmlentities($r['name']) ?>">
+                            <label for="name" class="form-label">商品名稱</label>
+                            <input type="text" class="form-control" id="name" name="name" data-required="1" value="<?= htmlentities($r['product_name']) ?>">
                             <div class="form-text"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">email</label>
-                            <input type="text" class="form-control" id="email" name="email" value="<?= htmlentities($r['email']) ?>" data-required="1">
-                            <div class="form-text"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="mobile" class="form-label">mobile</label>
-                            <input type="text" class="form-control" id="mobile" name="mobile" value="<?= htmlentities($r['mobile']) ?>" data-required="1">
-                            <div class="form-text"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="birthday" class="form-label">birthday</label>
-                            <input type="date" class="form-control" id="birthday" name="birthday" value="<?= htmlentities($r['birthday']) ?>">
-                            <div class="form-text"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">address</label>
-                            <textarea class="form-control" id="address" name="address" data-required="1"><?= $r['address'] ?></textarea>
+                            <label for="address" class="form-label">商品描述</label>
+                            <textarea class="form-control" id="description" name="description" data-required="1"><?= $r['description'] ?></textarea>
                             <div class="form-text"></div>
                         </div>
 
@@ -76,18 +61,17 @@ if (empty($r)) {
     const nameField = document.querySelector('#name');
     const infoBar = document.querySelector('#infoBar');
     // 取得必填欄位
-    const fields = document.querySelectorAll('form *[data-required="1"]');
+    const fields = document.querySelector('form1');
 
     function checkForm(event) {
         event.preventDefault();
 
-        for (let f of fields) {
-            f.style.border = '1px solid #ccc';
-            f.nextElementSibling.innerHTML = ''
-        }
-        nameField.style.border = '1px solid #CCC';
-        nameField.nextElementSibling.innerHTML = ''
-
+        // for (let f of fields) {
+        //     f.style.border = '1px solid #ccc';
+        //     f.nextElementSibling.innerHTML = ''
+        // }
+        // nameField.style.border = '1px solid #CCC';
+        // nameField.nextElementSibling.innerHTML = ''
         let isPass = true; // 預設值是通過的
 
         // TODO: 檢查欄位資料
@@ -104,18 +88,18 @@ if (empty($r)) {
         */
 
 
-        if (nameField.value.length < 2) {
-            isPass = false;
-            nameField.style.border = '1px solid red';
-            nameField.nextElementSibling.innerHTML = '請輸入至少兩個字'
-        }
-
         if (isPass) {
             const fd = new FormData(document.form1); // 沒有外觀的表單
-            // const usp = new URLSearchParams(fd); // 可以轉換為 urlencoded 格式
+            const usp = new URLSearchParams(fd); // 可以轉換為 urlencoded 格式
             // console.log(usp.toString());
 
+            fd.append("sid", <?= $sid ?>);
+            // for (var pair of fd.entries()) {
+            //     console.log(pair[0] + ', ' + pair[1]);
+            // }
+
             fetch('product_edit-api.php', {
+
                     method: 'POST',
                     body: fd, // Content-Type 省略, multipart/form-data
                 }).then(r => r.json())

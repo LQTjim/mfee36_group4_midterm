@@ -3,19 +3,6 @@
 include './parts/admin-required.php'; ?>
 <?php include './parts/db-connect.php'; ?>
 
-<?php
-
-$tpdspl =
-    'SELECT
-	pc.categories_name,pn.`sid`, `product_name`, `description` 
-FROM 
-	product_name pn 
-JOIN 
-	product_categories pc 
-ON 
-	pn.category_id=pc.sid;';
-
-?>
 <?php include './parts/html-head.php'; ?>
 <?php include './parts/html-navbar.php'; ?>
 <?php
@@ -35,8 +22,22 @@ if ($totalRows) {
         exit;
     }
 }
-$sql = sprintf("SELECT * FROM `product_name` ORDER BY sid  LIMIT %s, %s", ($page - 1) * $perPage, $perPage);
+$sql = sprintf("SELECT p.*, pc.`categories_name` FROM `product_name` p 
+JOIN product_categories as pc 
+ON p.category_id=pc.sid ORDER BY p.`sid`  LIMIT %s, %s ", ($page - 1) * $perPage, $perPage);
 $rows = $pdo->query($sql)->fetchAll();
+// $sql_categories = "
+// SELECT
+// 	pc.categories_name
+// FROM 
+// 	product_name as pn 
+// JOIN 
+// 	product_categories as pc 
+// ON 
+// 	pn.category_id=pc.sid;
+
+// ";
+// $categories = $pdo->query($sql_categories)->fetchAll();
 
 
 ?>
@@ -72,6 +73,8 @@ $rows = $pdo->query($sql)->fetchAll();
                 </a>
             </li>
         </ul>
+
+
     </nav>
 </div>
 <table class="table table-bordered table-striped">
@@ -81,6 +84,7 @@ $rows = $pdo->query($sql)->fetchAll();
             <th scope="col">編號</th>
             <th scope="col">商品名稱</th>
             <th scope="col">產品描述</th>
+            <th scope="col">產品類別</th>
             <th scope="col"><i class="fa-solid fa-pen-to-square"></i></th>
 
         </tr>
@@ -94,6 +98,7 @@ $rows = $pdo->query($sql)->fetchAll();
                 <td><?= $r['sid'] ?></td>
                 <td><?= $r['product_name'] ?></td>
                 <td><?= $r['description'] ?></td>
+                <td><?= $r['categories_name'] ?></td>
                 <td><a href="product_edit.php?sid=<?= $r['sid'] ?>">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </a>
