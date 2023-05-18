@@ -27,7 +27,7 @@
     function EditData() {
         global $pdo, $output;
 
-        if(empty($_POST['data'])) quit() ;
+        if(empty($_POST['data']) && $_POST['type'] == 'introduction') quit() ;
 
         $sql_gate = [
             'name' => " UPDATE `member` SET `{$_POST['type']}` = ? 
@@ -44,7 +44,7 @@
                               WHERE `sid` = {$_POST['sid']} ",
 
             'introduction' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = ?
-                              WHERE `sid` = {$_POST['sid']} ",
+                                WHERE `sid` = {$_POST['sid']} ",
         ] ;
 
         $sql = $sql_gate[$_POST['type']] ;

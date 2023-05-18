@@ -93,7 +93,7 @@
                             <label for="" class="me-1 fw-bold">
                                 <?= $label == 'name' ? '姓名' : '暱稱' ?>:
                             </label>
-                            <button class="edit_button position-relative align-middle" type="button" onclick="
+                            <button class="edit_button position-relative" type="button" onclick="
                                 const inputEl = this.querySelector('input');
                                 const spanEl = this.querySelector('span');
                                 inputEl.classList.remove('hide');
@@ -104,9 +104,12 @@
                                     inputEl.value = '';
                                 }, {'once': true});
                             ">
-                                <span class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2"><?= $row[$label] ?></span>
+                                <span class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2; vertical-align: sub;"><?= $row[$label] ?></span>
                                 <input class="name_input hide" type="text" onkeyup="
                                     if(event.which !== 13) return; 
+                                    let label = '<?= $label ?>';
+                                    if(label == 'name' && this.value.length < 2)
+                                        return SwalAlert('姓名不能少於兩個字') ;
                                     Edit({  'sid': <?= $row['sid'] ?>,
                                             'type': '<?= $label ?>',
                                             'data': this.value
@@ -128,6 +131,9 @@
                         </div>
                         <input id="<?= $label ?>_<?= $row[$label] ?>" class="col-10 hide_text lh-base align-self-center border border-0" type="text" value="<?= $row[$label] ?>" onkeyup="
                             if(event.which !== 13) return; 
+                            let label = '<?= $label ?>';
+                            if(label == 'introduction' && this.value.length < 8)
+                                return SwalAlert('自我介紹不得少於8個字', true) ;
                             Edit({  'sid': <?= $row['sid'] ?>,
                                     'type': '<?= $label ?>',
                                     'data': this.value
@@ -227,7 +233,7 @@
                     timerProgressBar: 'c_l_progressBar'
                 },
                 didClose: () => {
-                    data.success && window.location.reload()
+                    window.location.reload()
                 }
             })
 
@@ -347,6 +353,23 @@
             }
         })
 
+    }
+
+    function SwalAlert(message, reload = false) {
+        Swal.fire({
+            titleText: message,
+            icon: 'warning',
+            showCancelButton: false,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'c_l_progressBar'
+            },
+            didClose: () => {
+                reload && window.location.reload()
+            }
+        })
     }
 
 </script>
