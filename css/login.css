@@ -41,7 +41,22 @@ input:-webkit-autofill:focus {
   box-shadow: 0 0 0 0.25rem rgba(216, 43, 43, 0.25);
   border-color: rgba(216, 43, 43, 0.25);
 } */
+.captcha {
+  letter-spacing: 10px;
+  line-height: 47px;
+  border: 1px solid #ced4da;
+}
 
+.captcha span {
+  display: inline-block;
+  user-select: none;
+}
+.captcha-container i {
+  border: 1px solid #ced4da;
+  line-height: 40px;
+  padding: 0 10px;
+  cursor: pointer;
+}
 [data-login-btn]:first-child:active {
   background-color: rgb(99, 18, 128);
 }

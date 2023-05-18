@@ -1,5 +1,7 @@
 <?php
 require './../parts/db-connect.php';
+
+//錯誤訊息、error code
 $output = [
     'success' => false,
     'postData' => $_POST,
@@ -35,6 +37,9 @@ if (!empty($_POST['email']) and !empty($_POST['password'])) {
             $output['error'][0] = '您的密碼錯誤';
         }
     }
+} else {
+    $output['code'] = 500;
+    $output['error'][0] = '未知的錯誤，請聯絡服務人員';
 }
 
 header('Content-Type: application/json');
