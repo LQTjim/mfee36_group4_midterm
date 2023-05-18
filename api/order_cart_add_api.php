@@ -1,4 +1,8 @@
-<?php include '../parts/db-connect.php'; ?>
+<?php
+
+use function PHPSTORM_META\type;
+
+include '../parts/db-connect.php'; ?>
 <?php
 $output = [
     'success' => false,
@@ -9,20 +13,30 @@ $output = [
 
 
 if (!empty($_POST['member_sid'])) {
-
     $isPass = true;
-    // $member_sid = trim($_POST['member_sid']);
-    // $member_sid = filter_var($member_sid, FILTER_VALIDATE_INT);
-    // if(empty($member_sid)){
-    //     $isPass = false;
-    //     $output['error']['member_sid']='會員編號格式有誤';
-    // };
+    $member_sid = trim($_POST['member_sid']);
+    $member_sid = filter_var($member_sid, FILTER_VALIDATE_INT);
+    $products_type_sid = trim($_POST['products_type_sid']);
+    $products_type_sid = filter_var($products_type_sid, FILTER_VALIDATE_INT);
+    $item_sid = trim($_POST['item_sid']);
+    $item_sid = filter_var($item_sid, FILTER_VALIDATE_INT);
+    if (empty($member_sid) || empty($products_type_sid) || empty($item_sid)) {
+        $isPass = false;
+        $output['error']['member_sid'] = '格式有誤';
+        $output['error']['products_type_sid'] = '格式有誤';
+        $output['error']['item_sid'] = '格式有誤';
+        exit;
+    };
 
-    $sql_input = "INSERT INTO 
-    `order_cart`
-(`member_sid`, `products_type_sid`, `item_sid`, 
-`price`, `quantity`, `amount`, 
-`created_at`) VALUES 
+    $sql_input = "INSERT INTO `order_cart`
+(`member_sid`, 
+`products_type_sid`, 
+`item_sid`, 
+`price`, 
+`quantity`, 
+`amount`, 
+`created_at`) 
+VALUES 
 (?,
 ?,
 ?,
@@ -52,19 +66,11 @@ NOW())"; //表格製作時間created_at，以後改為now()
     }
 
     //產品編號
-    if ($_POST['products_type_sid'] === 1) {
-        $item = 1;
+    if ($type == 1) {
+        $quantity = 1;
     } else {
-        $item = intval($_POST['item_sid']);
+        $quantity = intval($_POST['quantity']);
     }
-
-    // $qty = ($type === 1) ? intval(1) : random_int(1, 10); //數量
-    // $p = $rows_input[$i - 1]['price'];
-    // $pp = random_int(1, 20) * 100; //實體產品的價格
-    // $amount = ($type === 1) ? $p : $qty * $pp; //總價
-    // $price = ($type === 1) ? $p : $pp; //判斷是lession price還是product price
-
-
 
     if ($isPass) {
         $stmt_input->execute([
@@ -73,14 +79,14 @@ NOW())"; //表格製作時間created_at，以後改為now()
             $type,
 
             // $_POST['item_sid'],
-            $item,
+            $_POST['item_sid'],
             $_POST['price'],
-            $_POST['quantity'],
+            $quantity,
             $_POST['amount'],
         ]);
     }
+    $output['success'] = !!$stmt_input->rowCount();
 }
-// header('Location: ../index_.php');
-
-// header('Location: ../login.php');
+header("Content-Type: application/json");
+echo json_encode($output, JSON_UNESCAPED_UNICODE)
 ?>

@@ -9,15 +9,11 @@ $output = [
 
 
 if (!empty($_POST['sid'])) {
-
     $isPass = true;
 
-    // $member_sid = trim($_POST['member_sid']);
-    // $member_sid = filter_var($member_sid, FILTER_VALIDATE_INT);
-    // if(empty($member_sid)){
-    //     $isPass = false;
-    //     $output['error']['member_sid']='會員編號格式有誤';
-    // };
+    if (!empty($_POST['sid'])) {
+        $output['success'] = true;
+    };
 
     $sql_input = "UPDATE 
 `order_cart` 
@@ -49,7 +45,4 @@ WHERE `sid` =?";
 
 header('conten-type: application/json');
 echo json_encode($output, JSON_UNESCAPED_UNICODE)
-// header('Location: ../index_.php');
-
-// header('Location: ../login.php');
 ?>

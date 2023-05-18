@@ -40,7 +40,7 @@ LEFT JOIN
 ON
     oc.member_sid=member.sid
 ORDER BY
-    oc.sid
+    oc.sid DESC
 LIMIT
     %s, %s", ($page - 1) * $perPage, $perPage);
 
@@ -72,6 +72,7 @@ endif;
                     <!-- page button -->
                     <?php for ($i = $page - 5; $i <= $page + 5; $i++) :
                         if ($i >= 1 and $i <= $totalPage) : ?>
+
                             <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
                                 <?php if ($i == $page) : ?>
                                     <span class="page-link" href="?page=<?= $i ?>"><?= $i ?></span>
@@ -99,10 +100,9 @@ endif;
 
     <!-- 主介面 -->
     <div class="row">
-        <table class="table">
+        <table class="table" data-toggle="table">
             <thead>
                 <tr>
-                    <th>編輯</th>
                     <th>編號</th>
                     <th>會員編號</th>
                     <th>會員姓名</th>
@@ -111,13 +111,13 @@ endif;
                     <th>數量</th>
                     <th>小計(NTD)</th>
                     <th>加入購物車時間</th>
+                    <th>編輯</th>
                     <th>刪除</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($rows_order_cart as $r) : ?><a href=></a>
                     <tr>
-                        <td><a href="javascript: editCart(<?= $r["sid"] ?>)"><i class=" fa-solid fa-pen-to-square"></i></a></td>
                         <td><?= $r['sid'] ?></td>
                         <td><?= $r['member_sid'] ?></td>
                         <td><?= $r['name'] ?></td>
@@ -126,6 +126,7 @@ endif;
                         <td><?= $r['quantity'] ?></td>
                         <td><?= $r['amount'] ?></td>
                         <td><?= $r['created_at'] ?></td>
+                        <td><a href="javascript: editCart(<?= $r["sid"] ?>)"><i class=" fa-solid fa-pen-to-square"></i></a></td>
                         <td><a href="javascript: deleteCart(<?= $r['sid'] ?>)"><i class="fa-solid fa-trash"></i></a></td>
                     </tr>
                 <?php endforeach; ?>
@@ -177,15 +178,11 @@ endif;
 <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
 
 <script>
-    // document.querySelector('.demo1').addEventListener('click', 
-    // function deleteCart(sid) {
-    //     swal({
-    //         title: "確定要刪除嗎?",
-    //         icon: `要刪除為這筆資料嗎?`,
-    //         buttons: true,
-    //         dangerMode: true
-    //     });
-    // };
+    // let order1 = document.querySelector('#sidorder')
+    // order1.addEventListener('click', function() {
+    //     $sidorderby = "DESC"
+    // })
+
     function editCart(sid) {
         if (confirm('編輯嗎?')) {
             location.href = ' ./order_cart_edit.php?sid=' + sid;

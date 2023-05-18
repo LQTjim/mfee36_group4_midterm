@@ -109,15 +109,6 @@ include './parts/admin-required.php';
           <a href="./order_cart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             購物車
           </a>
-          <a href="./order_main.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
-            歷史訂單
-          </a>
-          <a href="./order_detail.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
-            歷史訂單詳細資訊
-          </a>
-          <a href="./order_blank.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
-            blank
-          </a>
         </div>
       </div>
     </div>
