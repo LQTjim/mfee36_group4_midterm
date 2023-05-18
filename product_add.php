@@ -98,7 +98,8 @@ include './parts/html-navbar-end.php'; ?>
                     }
                     setTimeout(() => {
                         infoBar.style.display = 'none';
-                    }, 2000);
+                        window.location.replace('product_list.php');
+                    }, 1000);
                 })
                 .catch(ex => {
                     console.log(ex);
