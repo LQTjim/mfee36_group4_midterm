@@ -157,6 +157,8 @@ $r = $stmt->fetch();
             (city.AreaList.filter((el) => el.AreaName === e.target.value)[0]).RoadList.forEach((el) => {
                 roadName.innerHTML += `<option class="city-name">${el.RoadName}</option>`
             })
+            document.querySelector("#address").value = ""
+            document.querySelector("#address").value = `${cityName.value}${areaName.value}${roadName.value}`
         });
         roadName.addEventListener('change', () => {
             document.querySelector("#address").value = ""

@@ -8,10 +8,9 @@ include './parts/admin-required.php';
 <div class="d-flex ">
   <aside class="nav-aside sidebar vh-100 border-end d-flex bg-white flex-column">
     <!-- 1. 後台名稱 -->
-
-    <div class="px-4 bg-primary py-4 text-light fw-bold">
-      <strong>Group4</strong>
-      - 後台管理
+    <div class="pe-4 bg-primary py-4 text-light text-center fw-bold">
+      <img class="rounded-circle" style="width: 50px;height:50px;z-index:10000;" src="./assets/img/icon.png" alt="" />
+      <strong class="fs-5">健身堡壘</strong>
     </div>
     <!-- 2. 選單 -->
     <div class="overflow-auto">
