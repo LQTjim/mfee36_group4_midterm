@@ -1,18 +1,35 @@
 <script>
     'use strict'
 
-
-
     // start === add form button ===
     const addBtn = document.querySelector(".add-btn");
     const addForm = document.querySelector(".add-form");
 
     if (addBtn) {
         addBtn.addEventListener("click", () => {
-            addForm.classList.toggle('add-form-toggle');
+            addForm.classList.toggle('display-toggle');
         })
     }
     // end === add form button ===
+
+    // start === cancel add data ===
+    const cancelBtn = document.querySelector(".cancelBtn");
+
+    cancelBtn.addEventListener("click", () => {
+        addForm.classList.toggle('display-toggle');
+
+        const input = addForm.querySelectorAll("input");
+
+        for (let i = 0; i < input.length; i++) {
+
+            // Check if the element is an input field (excluding checkboxes and radio buttons)
+            if (input[i].type !== "checkbox" && input[i].type !== "radio") {
+                input[i].value = ""; // Clear the value
+            }
+        }
+
+    })
+    // end === cancel add data ===
 
     // start === add form data ===
     const subDataBtn = document.querySelector(".formBtn");
@@ -41,18 +58,27 @@
                     setTimeout(() => {
                         location.href = `?page=<?= $page ?>`
                     }, 1500)
+                } else {
+                    Swal.fire({
+                        text: '新增失敗',
+                        icon: 'error',
+                        showCancelButton: false,
+                        showConfirmButton: true
+                    })
+                    // setTimeout(() => {
+                    //     location.href = `?page=<?= $page ?>`
+                    // }, 1500)
                 }
             }
         ).catch((err) => {
             console.log(err);
             Swal.fire({
-                text: '新增失敗，請聯絡工程師',
+                text: '錯誤，請聯絡工程師',
                 icon: 'error',
                 showCancelButton: false,
-                showConfirmButton: false
+                showConfirmButton: true
             })
         })
-
     }
     // end === add form data ===
 
@@ -92,14 +118,24 @@
                     setTimeout(() => {
                         location.href = `?page=<?= $page ?>`
                     }, 1500)
+                } else {
+                    Swal.fire({
+                        text: '刪除失敗',
+                        icon: 'error',
+                        showCancelButton: true,
+                        showConfirmButton: false
+                    })
+                    // setTimeout(() => {
+                    //     location.href = `?page=<?= $page ?>`
+                    // }, 1500)
                 }
             }
         ).catch((err) => {
             console.log(err);
             Swal.fire({
-                text: '刪除失敗，請聯絡工程師',
+                text: '錯誤，請聯絡工程師',
                 icon: 'error',
-                showCancelButton: false,
+                showCancelButton: true,
                 showConfirmButton: false
             })
         })
