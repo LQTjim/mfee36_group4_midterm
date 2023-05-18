@@ -45,7 +45,7 @@ include './parts/admin-required.php';
         <a data-bs-toggle="collapse" class="sidebar-link <?= in_array($pageName, $c_l_pages) ? 'active' : '' ?>" href="#coach-lession" role="button">
           <div class="d-flex justify-content-between px-4">
             <p class="mb-0">
-              教練與課程系統
+              教練管理
             </p>
             <i class="fa-solid fa-caret-down"></i>
           </div>

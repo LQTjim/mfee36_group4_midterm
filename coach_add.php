@@ -77,13 +77,10 @@
                 </div>
                 <?php endforeach ; ?>
                 <div class="edit_field lh-lg d-flex mt-1 align-items-center">
-                    <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal()">編輯證照
+                    <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal()">新增證照
                         <i class="fa-solid fa-pen-to-square ms-1"></i>
                     </button>
                     <input name="certification" id="certi_ids" type="text" hidden>
-                    <button class="me-2 btn btn-secondary" type="button">課程列表
-                        <i class="fa-solid fa-pen-to-square ms-1"></i>
-                    </button>
                     <button class="ms-auto btn btn-dark" type="submit">
                         確定新增
                     </button>
@@ -97,7 +94,7 @@
 <dialog id="certi_modal">
     <label class="fw-bold" >證照列表 ( 點擊登錄 )</label>
     <div class="modal_monitor mb-2"></div>
-    <label class="fw-bold" >已登錄證照 ( 點擊移除 )</label>
+    <label class="fw-bold" >登錄證照 ( 點擊移除 )</label>
     <div class="modal_body mb-3"></div>
     <div class="text-center">
         <button class="btn btn-primary me-2" onclick="
