@@ -9,19 +9,25 @@
         'error' => [],
     ];
 
-    if( empty($_GET['id']) ) quit('empty') ;
-    if( !is_numeric($_GET['id']) ) quit('not num') ;
+    if( empty($_GET['id']) ) quit('輸入值錯誤') ;
+    if( !is_numeric($_GET['id']) ) quit('輸入值錯誤') ;
 
     $id = intval($_GET['id']) ;
 
-    $sql = "SELECT * FROM `member` WHERE `sid` = {$id}" ;
+    $c_sql = "SELECT `member_sid` FROM `c_l_coach`" ;
+    $c_statment = $pdo->query($c_sql) ;
+    $c_rows = $c_statment->fetchAll() ;
 
+    foreach($c_rows as $rows) {
+        if(in_array($id, $rows))
+            quit('此教練已登錄') ;
+    }
+
+    $sql = "SELECT * FROM `member` WHERE `sid` = {$id}" ;
     $statment = $pdo->query($sql) ;
     $row = $statment->fetch();
 
-    if(!!! $statment->rowCount()) quit('sql error') ;
-
-    if(!isset($row['role_sid']) || empty($row['role_sid'])) quit('no role') ;
+    if(!isset($row['role_sid']) || empty($row['role_sid'])) quit('資料庫錯誤') ;
 
     if($row['role_sid'] !== "2") quit('該會員尚未登錄為教練') ;
 
