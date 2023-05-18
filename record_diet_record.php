@@ -8,6 +8,7 @@ $pagePerSide = 4; //pages pers side on the pagniation
 $pageName = 'record';
 $title = 'record_diet_record';
 $data = 'record_diet_record';
+$addApi = './api/record-diet-add-api.php';
 ?>
 <link rel="stylesheet" href="./css/sean.css">
 
@@ -27,6 +28,7 @@ $tot_row =  $pdo->query($tot_sql)->fetch(PDO::FETCH_NUM)[0]; // total number of 
 $totPages = ceil($tot_row / $perPage);
 // echo $tot_row;
 // exit;
+
 
 $rows = [];
 if ($tot_row) {
@@ -122,10 +124,13 @@ if ($tot_row) {
                             <td>
                                 <div><?= $r['diet_time'] ?></div>
                             </td>
+                            <!-- ==================== -->
                             <td class="pe-4">
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-sm btn-outline-dark">
-                                        編輯 </a>
+                                <div class="btnA btn-group">
+                                    <a href="./record_diet_record_edit.php?sid=<?= $r['sid'] ?>" class=" btn-edit btn btn-sm btn-outline-dark">
+                                        編輯
+                                    </a>
+
                                     <a href="#" class="btn btn-sm btn-outline-dark text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-order-id="<?= $r['sid'] ?>">刪除</a>
                                 </div>
                             </td>
@@ -160,7 +165,7 @@ if ($tot_row) {
     <div><button type="button" class="add-btn btn btn-info mb-2 ms-2 border border-primary"><i class="fa-solid fa-plus"></i>Add</button></div>
 
     <form name="addForm" id="addForm">
-        <div class="add-form add-form-toggle table-responsive ms-3 me-3">
+        <div class="add-form display-toggle table-responsive ms-3 me-3">
             <table class="table table-hover mb-0">
 
                 <tbody class="text-nowrap">
@@ -168,32 +173,35 @@ if ($tot_row) {
                         <td>
                             <div class="">
                                 <label for="memberSid" class="form-label">member ID</label>
-                                <input type="email" class="form-control" name="memberSid" id="memberSid" placeholder="999">
+                                <input type="text" class="form-control" name="memberSid" id="memberSid" placeholder="999">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">food ID</label>
+                                <label for="foodSid" class="form-label">food ID</label>
                                 <input type="email" class="form-control" name="foodSid" id="foodSid" placeholder="183">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">數量</label>
-                                <input type="email" class="form-control" name="quantity" id="quantity" placeholder="99">
+                                <label for="quantity" class="form-label">數量</label>
+                                <input type="text" class="form-control" name="quantity" id="quantity" placeholder="99">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">紀錄時間</label>
-                                <input type="email" class="form-control" name="record_time" id="record_time" placeholder="2020-01-01">
+                                <label for="record_time" class="form-label">紀錄時間</label>
+                                <input type="text" class="form-control" name="record_time" id="record_time" placeholder="2020-01-01">
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
             <div class="col-12">
-                <button class="formBtn btn btn-primary" type="button" onclick="addData(event)" data-add-api="./api/record-diet-add-api.php">Submit form</button>
+                <button class="ms-3 formBtn btn btn-success" type="button" onclick="addData(event)" data-add-api="<?= $addApi ?>">Submit form</button>
+
+                <button class="ms-5 cancelBtn btn btn-danger" type="button">cancel</button>
             </div>
 
         </div>
