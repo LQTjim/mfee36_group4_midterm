@@ -6,14 +6,15 @@ include './parts/admin-required.php';
 ?>
 
 <div class="d-flex ">
-  <aside class="sidebar vh-100 border-end pt-3 d-flex bg-white flex-column">
+  <aside class="nav-aside sidebar vh-100 border-end d-flex bg-white flex-column">
     <!-- 1. 後台名稱 -->
-    <div class="px-4">
+
+    <div class="px-4 bg-primary py-4 text-light fw-bold">
       <strong>Group4</strong>
       - 後台管理
     </div>
     <!-- 2. 選單 -->
-    <div class="overflow-auto mt-3">
+    <div class="overflow-auto">
       <div><!-- 不包含子選單 -->
         <a class="sidebar-link <?= $pageName === 'homepage' ? 'active' : '' ?>" href="./index.php" role="button">
           <div class="px-4 ">
@@ -32,10 +33,10 @@ include './parts/admin-required.php';
           </div>
         </a>
         <div class="collapse" id="menu-member" role="button">
-          <a href="./member_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+          <a href="./member_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_list' ? 'active' : '' ?>">
             會員列表
           </a>
-          <a href="/order.html" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+          <a href="./member_add.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_add' ? 'active' : '' ?>">
             新增會員
           </a>
         </div>
@@ -94,6 +95,31 @@ include './parts/admin-required.php';
         </div>
       </div>
 
+
+      <div><!-- 購物車 -->
+        <a data-bs-toggle="collapse" class="sidebar-link" href="#order_cart" role="button">
+          <div class="d-flex justify-content-between px-4">
+            <p class="mb-0">
+              消費紀錄
+            </p>
+            <i class="fa-solid fa-caret-down"></i>
+          </div>
+        </a>
+        <div class="collapse" id="order_cart" role="button">
+          <a href="./order_cart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            購物車
+          </a>
+          <a href="./order_main.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            歷史訂單
+          </a>
+          <a href="./order_detail.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            歷史訂單詳細資訊
+          </a>
+          <a href="./order_blank.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            blank
+          </a>
+        </div>
+      </div>
     </div>
     <div class="d-flex justify-content-around align-items-center px-1 pb-2 mt-auto w-100">
       <img src="<?= isset($_SESSION['admin']['hero_icon']) ? $_SESSION['admin']['hero_icon'] : "./imgs/defalut_icon.jpg" ?>" alt="<?= isset($_SESSION['admin']['name']) ? $_SESSION['admin']['name'] : '使用者' ?>" class="navbar-icon" />
@@ -102,6 +128,7 @@ include './parts/admin-required.php';
     <div class="d-flex px-2 pb-1">
       <a class="w-100 btn btn-primary " href="./api/logout-api.php" role="button">登出</a>
     </div>
+
   </aside>
   <main class="main">
     <!-- <div class="bg-white w-100 border-bottom sticky-top">
