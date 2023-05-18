@@ -75,7 +75,7 @@
                                 <?php $create_time = explode(' ',$row['created_at'])[0] ?>
                                 <span><?= explode(' ',$row['created_at'])[0] ?></span>
                                 <i class="fa-solid fa-pen-to-square ms-2"></i>
-                                <input type="date" style="visibility: hidden; position: absolute; left: -5rem;"
+                                <input type="date" style="visibility: hidden; position: absolute; left: -5rem;" max="<?= date('Y-m-d'); ?>"
                                 onchange="Edit({  
                                     'sid': <?= $row['sid'] ?>,
                                     'type': 'date',
@@ -138,13 +138,13 @@
                     </div>
                     <?php endforeach ; ?>
                     <div class="edit_field lh-lg d-flex mt-1 align-items-center">
-                        <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>)">編輯證照
+                        <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>,'<?= $row['name'] ?>')">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="me-2 btn btn-secondary" type="button">課程列表
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
-                        <button class="ms-auto btn btn-dark" type="button">
+                        <button class="ms-auto btn btn-dark" type="button" onclick="handleDelete(<?= $row['sid'] ?>)">
                             <span>刪除教練</span>
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
@@ -157,6 +157,14 @@
 </div>
 
 <dialog id="certi_modal">
+    <div class="fw-bold fs-5 mb-2">
+        <label class="me-2">教練編號:
+            <span id="coach_code" class="me-2"></span>
+        </label>
+        <label>姓名:
+            <span id="coach_name" class="me-2"></span>
+        </label>
+    </div>
     <label class="fw-bold" >證照列表 ( 點擊登錄 )</label>
     <div class="modal_monitor mb-2"></div>
     <label class="fw-bold" >已登錄證照 ( 點擊移除 )</label>
@@ -201,7 +209,6 @@
         }
 
         try {
-
             const response = await fetch("./api/c_l_handle_edit.php", {
                 method: "POST",
                 body: formdata,
@@ -229,7 +236,7 @@
         }
     }
 
-    async function OpenCertiModal(sid) {
+    async function OpenCertiModal(sid,name) {
 
         LoadingModal.fire()
 
@@ -248,6 +255,8 @@
         let body_frag = document.createDocumentFragment()
         let monitor = document.querySelector('.modal_monitor')
         let modalBody = document.querySelector('.modal_body')
+        modal.querySelector('#coach_code').textContent = sid
+        modal.querySelector('#coach_name').textContent = name
 
         for (let item of items['all']) {
             let div = document.createElement('div')
@@ -302,6 +311,42 @@
         let certi_modal = document.getElementById('certi_modal');
         certi_modal.removeAttribute('data-sid');
         certi_modal.close();
+    }
+
+    async function handleDelete(id) {
+        const confirm = await Swal.fire({
+            title: '確定刪除教練資料?',
+            text: '此動作無法回復',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: '確定刪除',
+            cancelButtonText: '取消',
+        })
+
+        if (!confirm.isConfirmed) return
+
+        LoadingModal.fire()
+
+        const response = await fetch(`./api/c_l_deleteCoach.php?id=${id}`)
+
+        const result = await response.json()
+
+        Swal.fire({
+            titleText: result.success ? '刪除成功' : '刪除發生錯誤',
+            icon: result.success ? 'success' : 'error',
+            showCancelButton: false,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'c_l_progressBar'
+            },
+            didClose: () => {
+                result.success && window.location.reload()
+            }
+        })
+
     }
 
 </script>

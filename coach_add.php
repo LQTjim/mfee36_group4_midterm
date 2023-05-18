@@ -17,7 +17,11 @@
         <div class="col-lg-2 col-md-3 col-sm-4 img-box">
             <img src="./imgs/coach_imgs/coach.png" id="photo" class="img-fluid rounded" alt="coach img">
             <i class="fa-solid fa-pen-to-square edit-img" onclick="document.getElementById('photo_').click()"></i>
-            <input name="photo" type="file" accept="image/png, image/jpeg, image/webp" id="photo_" onchange="" hidden>
+            <input name="photo" type="file" accept="image/png, image/jpeg, image/webp" id="photo_" hidden onchange="
+                const [file] = this.files 
+                if(!file) return
+                document.getElementById('photo').src = window.URL.createObjectURL(file)
+            ">
         </div>
         <div class="col-lg-10 col-md-9 col-sm-8">
             <div id="search_card" class="card-body h-100 d-flex justify-content-start align-items-center">
@@ -101,7 +105,7 @@
             const data = items.map(item => parseInt(item.dataset.cid));
             document.getElementById('certi_ids').value = data
             CloseCertiModal();
-        ">修改</button>
+        ">新增</button>
         <button class="btn btn-secondary" onclick="CloseCertiModal()">取消</button>
     </div>
 </dialog>
@@ -154,6 +158,13 @@
     async function CreateCoach(event) {
         event.preventDefault()
 
+        const card_hide = document.getElementById('coach_card').hasAttribute('hidden')
+
+        if(card_hide) {
+            SearchMember(document.getElementById('search_id').value)
+            return false
+        } 
+        
         LoadingModal.fire()
 
         const formData = new FormData(event.target)
