@@ -6,13 +6,11 @@ include './parts/db-connect.php';
 
 $perPage = 5;
 $pagePerSide = 4; //pages pers side on the pagniation
-$title = 'record_diet_record';
-$data = 'record_diet_record';
-$addApi = './api/record-diet-add-api.php';
+$title = 'record_food_type';
+$data = 'record_food_type';
+$addApi = './api/record-food-type-add-api.php';
 ?>
 <link rel="stylesheet" href="./css/sean.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <?php
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // if no specify page, then go to first page
@@ -22,15 +20,9 @@ if ($page < 1) {
     exit; // finish "this php after redirect"
 }
 
-// $tot_sql = "SELECT COUNT(1) FROM $data";
-$tot_sql = "SELECT COUNT(1)
-FROM $data db
-JOIN `member` m ON db.member_sid = m.sid AND m.active='1'";
+$tot_sql = "SELECT COUNT(1) FROM $data";
 $tot_row =  $pdo->query($tot_sql)->fetch(PDO::FETCH_NUM)[0]; // total number of data
 $totPages = ceil($tot_row / $perPage);
-// echo $tot_row;
-// exit;
-
 
 $rows = [];
 if ($tot_row) {
@@ -41,45 +33,22 @@ if ($tot_row) {
 
     // $sql = sprintf("SELECT * FROM address_book LIMIT %s, %s", ($page - 1) * $perPage, $perPage);
     $sql = sprintf(
-        "SELECT dr.sid, m.name, ft.sid AS ftSid, ft.food_type, ft.calories, ft.protein, dr.quantity, dr.diet_time
-        FROM `record_diet_record` dr
-        JOIN `member` m ON dr.member_sid = m.sid AND m.active='1'
-        JOIN `record_food_type` ft ON dr.food_sid = ft.sid
-        ORDER BY dr.diet_time DESC LIMIT %s, %s",
+        "SELECT db.sid, db.food_type, db.food_description, db.calories, db.protein, db.unit, db.food_img, fc.category_name, db.status
+        FROM $data AS db
+        JOIN record_food_category fc ON db.category_sid=fc.sid
+        ORDER BY db.sid DESC LIMIT %s, %s",
         ($page - 1) * $perPage,
         $perPage
     );
     $rows = $pdo->query($sql)->fetchAll();
 }
-// === bar chart ===
 
-$sql_barChart = sprintf("SELECT dr.food_sid, ft.food_type,
-COUNT(dr.food_sid) AS freq
-FROM  record_diet_record dr
-JOIN record_food_type ft ON dr.food_sid = ft.sid
-GROUP BY dr.food_sid
-ORDER BY freq DESC
-LIMIT 5;
-");
+// print_r($rows);
+// exit;
 
-$bar_rows = $pdo->query($sql_barChart)->fetchAll();
-
-$fID = [];
-$fData = [];
-
-foreach ($bar_rows as $b) {
-    // $fID[] = intval($b['member_sid']);
-    $fID[] = $b['food_type'];
-    $fData[] = intval($b['freq']);
-}
 // ========================================================
+
 ?>
-
-<div class="chartBox">
-    <canvas id="bar-chart" class=""></canvas>
-</div>
-
-<!-- end barchart =============================================== -->
 <div class="card shadow-sm">
     <div class="card-header bg-transparent">
         <div class="input-group">
@@ -112,50 +81,60 @@ foreach ($bar_rows as $b) {
                         <th scope="col" class="ps-4">
                             <input type="checkbox" class="form-check-input">
                         </th>
+                        <!-- SELECT `sid`, `food_type`, `food_description`, `calories`, `protein`, `unit`, `food_img`, `category_sid`, `status` FROM `record_food_type` WHERE 1 -->
                         <th scope="col" class="py-3 ">紀錄編號</th>
-                        <th scope="col">姓名</th>
-                        <th scope="col">食物類型</th>
-                        <th scope="col">數量</th>
-                        <th scope="col">熱量</th>
+                        <th scope="col">類型</th>
+                        <th scope="col">敘述</th>
+                        <th scope="col">卡路里</th>
                         <th scope="col">蛋白質</th>
-                        <th scope="col">紀錄時間</th>
+                        <th scope="col">單位</th>
+                        <th scope="col">照片</th>
+                        <th scope="col">分類</th>
+                        <th scope="col">狀態(0/1)</th>
                         <th scope="col" class="pe-4">編輯</th>
                     </tr>
                 </thead>
                 <tbody class="text-nowrap">
                     <?php foreach ($rows as $r) : ?>
-                        <tr>
+                        <tr data-sid=<?= $r['sid'] ?>>
                             <td class="ps-4">
                                 <input type="checkbox" class="form-check-input">
                             </td>
+                            <!-- db.sid, db.food_type, db.food_description, db.calories, db.protein, db.unit, db.food_img, fc.category_name, db.status -->
                             <td scope="row">
                                 <div><?= $r['sid'] ?></div>
-                            </td>
-                            <td>
-                                <div><?= $r['name'] ?></div>
                             </td>
                             <td>
                                 <div><?= $r['food_type'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['quantity'] ?></div>
+                                <div class="sean_description sean_ellipsis"><?= $r['food_description'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['quantity'] * $r['calories'] ?></div>
+                                <div><?= $r['calories'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['quantity'] * $r['protein'] ?></div>
+                                <div><?= $r['protein'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['diet_time'] ?></div>
+                                <div><?= $r['unit'] ?></div>
                             </td>
-                            <!-- ==================== -->
+                            <td>
+                                <div>
+                                    <!-- <?= $r['food_img'] ?> -->
+                                    <img class="imgBox" src="<?= $r['food_img'] ?>" alt="404">
+                                </div>
+                            </td>
+                            <td>
+                                <div><?= $r['category_name'] ?></div>
+                            </td>
+                            <td>
+                                <div><?= $r['status'] ?></div>
+                            </td>
                             <td class="pe-4">
-                                <div class="btnA btn-group">
-                                    <a href="./record_diet_record_edit.php?sid=<?= $r['sid'] ?>" class=" btn-edit btn btn-sm btn-outline-dark">
-                                        編輯
-                                    </a>
-
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-sm btn-outline-dark">
+                                        編輯 </a>
                                     <a href="#" class="btn btn-sm btn-outline-dark text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-order-id="<?= $r['sid'] ?>">刪除</a>
                                 </div>
                             </td>
@@ -168,7 +147,7 @@ foreach ($bar_rows as $b) {
     <!-- pagination -->
     <?php include "./parts/html-pagination.php" ?>
     <!-- Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -195,34 +174,57 @@ foreach ($bar_rows as $b) {
 
                 <tbody class="text-nowrap">
                     <tr>
+                        <!-- INSERT INTO `record_food_type`( `food_type`, `food_description`, `calories`, `protein`, `unit`, `food_img`, `category_sid`, `status`) -->
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">member ID</label>
-                                <input type="text" class="form-control" name="memberSid" id="memberSid" placeholder="999">
+                                <label for="food_type" class="form-label">名稱</label>
+                                <input type="text" class="form-control" name="food_type" id="food_type" placeholder="天鵝肉">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="foodSid" class="form-label">food ID</label>
-                                <input type="email" class="form-control" name="foodSid" id="foodSid" placeholder="183">
+                                <label for="food_description" class="form-label">敘述</label>
+                                <input type="text" class="form-control" name="food_description" id="food_description" placeholder="美味！">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="quantity" class="form-label">數量</label>
-                                <input type="text" class="form-control" name="quantity" id="quantity" placeholder="99">
+                                <label for="calories" class="form-label">卡路里</label>
+                                <input type="text" class="form-control" name="calories" id="calories" placeholder="不要問">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="record_time" class="form-label">紀錄時間</label>
-                                <input type="text" class="form-control" name="record_time" id="record_time" placeholder="2020-01-01">
+                                <label for="protein" class="form-label">蛋白質</label>
+                                <input type="text" class="form-control" name="protein" id="protein" placeholder="嘻嘻">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="unit" class="form-label">單位</label>
+                                <select class="form-select" name="unit" id="unit">
+                                    <option value="">--請選擇--</option>
+                                    <option value="100g">100g</option>
+                                    <option value="100ml">100ml</option>
+                                </select>
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="food_img" class="form-label">圖片路徑</label>
+                                <input type="text" class="form-control" name="food_img" id="food_img" placeholder="./imgs/food/牛肉.jpg">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="fcategory_sid" class="form-label">分類</label>
+                                <input type="text" class="form-control" name="category_sid" id="category_sid" placeholder="肉類(2)">
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
-
             <div class="col-12">
                 <button class="ms-3 formBtn btn btn-success" type="button" onclick="addData(event)" data-add-api="<?= $addApi ?>">Submit form</button>
 
@@ -234,43 +236,6 @@ foreach ($bar_rows as $b) {
     <!-- end === add data === -->
 
 </div>
-<script>
-    const barCtx = document.querySelector("#bar-chart").getContext('2d');
-    const barConfig = {
-        type: 'bar',
-        data: {
-            datasets: [{
-                data: <?= json_encode($fData) ?>,
-                label: '熱門飲食'
-            }],
-            labels: <?= json_encode($fID) ?>
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    ticks: {
-                        // Include a dollar sign in the ticks
-                        callback: function(value, index, ticks) {
-                            return value;
-                        }
-                    }
-                },
-                // x: {
-                //     ticks: {
-                //         // Include a dollar sign in the ticks
-                //         callback: function(value, index, ticks) {
-                //             return value;
-                //         }
-                //     }
-                // }
-            }
-
-
-        }
-    };
-    const barChart = new Chart(barCtx, barConfig);
-</script>
 <?php
 include './parts/html-navbar-end.php'; ?>
 <?php
