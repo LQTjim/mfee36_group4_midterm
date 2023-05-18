@@ -46,9 +46,9 @@ m.`created_at`,
 m.`active`
 FROM
 `member` m 
-JOIN `member_sex` ms ON m.sex_sid = ms.sid
-JOIN `member_level` ml ON m.`member_level_sid` = ml.sid
-JOIN `member_role` mr ON m.`role_sid` = mr.sid 
+LEFT JOIN `member_sex` ms ON m.sex_sid = ms.sid
+LEFT JOIN `member_level` ml ON m.`member_level_sid` = ml.sid
+LEFT JOIN `member_role` mr ON m.`role_sid` = mr.sid 
 WHERE m.name LIKE '%%%s%%'
 ORDER BY
 `m`.`sid` DESC LIMIT %s, %s", $query, ($page - 1) * $perPage, $perPage);
@@ -59,7 +59,7 @@ ORDER BY
 <div>
     <a href="index.php">首頁</a>
     >>
-    <a href="javascript: return;">會員列表</a>
+    <a href="member_list.php">會員列表</a>
 </div>
 <div class="card shadow-sm">
     <div class="card-footer bg-transparent py-3">
@@ -126,7 +126,7 @@ ORDER BY
                         <th scope="col" class="py-3 ">會員編號</th>
                         <th scope="col">Email</th>
                         <th scope="col">姓名</th>
-                        <th scope="col">生日</th>
+                        <th scope="col align-center">生日</th>
                         <th scope="col  ">地址</th>
                         <th scope="col">性別</th>
                         <th scope="col">會員等級</th>
@@ -414,8 +414,37 @@ ORDER BY
             //     })
             // })
             deleteSelected.addEventListener('click', () => {
-                const deleteSelectedSid = [];
-                Array.from(tdCheck.querySelector(''));
+                const selectedSids = document.querySelectorAll('input:checked[data-check]')
+                if (selectedSids.length > 0) {
+                    const fd = new FormData()
+                    selectedSids.forEach((el, i) => {
+                        fd.append('deleteSids[]', el.dataset['check'])
+                    });
+                    fetch('./api/member-list-delete-select-api.php', {
+                        method: 'POST',
+                        body: fd
+                    }).then((r) => r.json()).then((data) => {
+                        if (data.success) {
+                            Swal.fire({
+                                text: '刪除成功',
+                                icon: 'success',
+                                showCancelButton: false,
+                                showConfirmButton: false
+                            })
+                            setTimeout(() => {
+                                location.href = `/mfee36_group4_midterm/member_list.php?page=<?= $page ?>`
+                            }, 1500)
+                        }
+
+                    }).catch((err) => {
+                        Swal.fire({
+                            text: '刪除失敗，請聯絡工程師',
+                            icon: 'error',
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        })
+                    })
+                }
             })
         })()
     </script>

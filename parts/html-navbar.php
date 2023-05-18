@@ -39,6 +39,9 @@ include './parts/admin-required.php';
           <a href="./member_add.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_add' ? 'active' : '' ?>">
             新增會員
           </a>
+          <a href="./member_chart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_chart' ? 'active' : '' ?>">
+            會員分析
+          </a>
         </div>
       </div>
 
