@@ -22,7 +22,11 @@
     $certis = $_POST['certification'] ;
     unset($_POST['certification']) ;
     
+    // insert data first
     if(!InsertData()) quit('fail to insert data') ;
+    // put coach id to output variable
+    $output['id'] = getCoachId() ;
+    // insert certification data
     if(!HandleCerti()) quit('fail to insert certification') ;
 
     $output['success'] = true ;
@@ -52,7 +56,7 @@
         $statment = $pdo->prepare($final_sql) ;
         $post_values = array_values(array_filter($_POST)) ;
         $statment->execute($post_values) ;
-    
+
         return !! $statment->rowCount() ;
     }
 
@@ -61,16 +65,7 @@
 
         if(empty($certis)) return true;
 
-        $m_sid = intval($_POST['member_sid']) ;
-
-        $get_cid_sql = "SELECT `sid` FROM `c_l_coach` 
-                        WHERE `member_sid` = {$m_sid} "
-        ;
-        $g_c_stmt = $pdo->query($get_cid_sql) ;
-
-        $row = $g_c_stmt->fetch() ; 
-        $sid = intval($row['sid']) ;
-
+        $sid = getCoachId() ;
         $certis = explode(",", $certis) ;
 
         foreach($certis as $certi) {
@@ -79,10 +74,22 @@
                         ( `coach_sid`, `certification_sid` ) 
                         VALUES ( {$sid}, {$cid} )"
             ;
-
             $add_stm = $pdo->query($add_sql) ;
         }
         return !! $add_stm->rowCount() ;
+    }
+
+    function getCoachId() {
+        global $pdo ;
+
+        $m_sid = intval($_POST['member_sid']) ;
+        $get_cid_sql = "SELECT `sid` FROM `c_l_coach` 
+                        WHERE `member_sid` = {$m_sid} "
+        ;
+        $g_c_stmt = $pdo->query($get_cid_sql) ;
+        $row = $g_c_stmt->fetch() ; 
+        $sid = intval($row['sid']) ;
+        return $sid ;
     }
 
     function SaveImage() {
