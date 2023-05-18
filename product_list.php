@@ -93,7 +93,7 @@ $rows = $pdo->query($sql)->fetchAll();
         </ul>
         <div class="input-group mb-3 ">
             <input type="text" class="search_byname" id="search_byname" placeholder="請輸入商品名" aria-describedby="button-addon2" value="<?= isset($_GET['product_name']) ? $_GET['product_name'] : "" ?>">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">搜尋</button>
         </div>
 
     </nav>
