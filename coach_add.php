@@ -1,7 +1,7 @@
 <?php
     include './parts/admin-required.php';
     include './parts/db-connect.php' ;
-    $pageName = 'Coachs';
+    $pageName = 'Add Coach';
     include './parts/html-head.php';
     include './parts/html-navbar.php';
 ?>
