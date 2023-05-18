@@ -94,6 +94,24 @@ include './parts/admin-required.php';
           </a>
         </div>
       </div>
+      <div><!-- 包含子選項 -->
+        <a data-bs-toggle="collapse" class="sidebar-link <?= $pageName === 'product' ? 'active' : '' ?>" href="#menu-product" role="button">
+          <div class="d-flex justify-content-between px-4">
+            <p class="mb-0">
+              商品管理
+            </p>
+            <i class="fa-solid fa-caret-down"></i>
+          </div>
+        </a>
+        <div class="collapse" id="menu-product" role="button">
+          <a href="./product_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            商品列表
+          </a>
+          <a href="./product_add.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
+            新增商品
+          </a>
+        </div>
+      </div>
 
 
       <div><!-- 購物車 -->
