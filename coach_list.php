@@ -116,11 +116,13 @@
                                 inputEl.addEventListener('blur', () => {
                                     inputEl.classList.add('hide');
                                     inputEl.value = '';
-                                }, {'once': true});
-                            ">
-                                <span class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2; vertical-align: sub;"><?= $row[$label] ?></span>
+                                }, {'once': true});"
+                            onkeydown="if(event.which == 13) return false;"
+                            >
+                                <span id="name_label" class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2; vertical-align: sub;"><?= $row[$label] ?></span>
                                 <input class="name_input hide" type="text" onkeyup="
-                                    if(event.which !== 13) return; 
+                                    event.preventDefault() ;
+                                    if(event.which !== 13) return;
                                     let label = '<?= $label ?>';
                                     if(label == 'name' && this.value.length < 2)
                                         return SwalAlert('姓名不能少於兩個字') ;
@@ -129,7 +131,7 @@
                                             'data': this.value
                                     });
                                     this.blur();
-                                ">
+                                " tabindex="-1">
                                 <i class="fa-solid fa-pen-to-square ms-1"></i>
                             </button>
                         </span>
