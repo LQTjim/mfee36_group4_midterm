@@ -2,9 +2,9 @@
 // require './parts/db-connect-local-config.php';
 $db_host = 'localhost';
 // $db_host = 'localhost:8889'; #TODO
-$db_name = 'mfee_36_group_4';
+$db_name = 'final';
 $db_user = 'root';
-$db_pass = 'poop';
+$db_pass = 'root';
 $dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";
 $pdo_option = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
