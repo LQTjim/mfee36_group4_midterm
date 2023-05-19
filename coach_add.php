@@ -1,7 +1,7 @@
 <?php
     include './parts/admin-required.php';
     include './parts/db-connect.php' ;
-    $pageName = 'Coachs';
+    $pageName = 'Add Coach';
     include './parts/html-head.php';
     include './parts/html-navbar.php';
 ?>
@@ -16,9 +16,9 @@
     <form class="row g-0 h-100" onsubmit="CreateCoach(event)">
         <div class="col-lg-2 col-md-3 col-sm-4 img-box">
             <img src="./imgs/coach_imgs/coach.png" id="photo" class="img-fluid rounded" alt="coach img">
-            <i class="fa-solid fa-pen-to-square edit-img" onclick="document.getElementById('photo_').click()"></i>
+            <i id="img_icon" class="fa-solid fa-pen-to-square edit-img" onclick="document.getElementById('photo_').click()" hidden></i>
             <input name="photo" type="file" accept="image/png, image/jpeg, image/webp" id="photo_" hidden onchange="
-                const [file] = this.files 
+                const [ file ] = this.files
                 if(!file) return
                 document.getElementById('photo').src = window.URL.createObjectURL(file)
             ">
@@ -77,13 +77,10 @@
                 </div>
                 <?php endforeach ; ?>
                 <div class="edit_field lh-lg d-flex mt-1 align-items-center">
-                    <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal()">編輯證照
+                    <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal()">新增證照
                         <i class="fa-solid fa-pen-to-square ms-1"></i>
                     </button>
                     <input name="certification" id="certi_ids" type="text" hidden>
-                    <button class="me-2 btn btn-secondary" type="button">課程列表
-                        <i class="fa-solid fa-pen-to-square ms-1"></i>
-                    </button>
                     <button class="ms-auto btn btn-dark" type="submit">
                         確定新增
                     </button>
@@ -97,7 +94,7 @@
 <dialog id="certi_modal">
     <label class="fw-bold" >證照列表 ( 點擊登錄 )</label>
     <div class="modal_monitor mb-2"></div>
-    <label class="fw-bold" >已登錄證照 ( 點擊移除 )</label>
+    <label class="fw-bold" >登錄證照 ( 點擊移除 )</label>
     <div class="modal_body mb-3"></div>
     <div class="text-center">
         <button class="btn btn-primary me-2" onclick="
@@ -152,7 +149,7 @@
         document.getElementById('search_card').className = ''
         document.getElementById('search_card').setAttribute('hidden', '')
         document.getElementById('coach_card').removeAttribute('hidden')
-
+        document.getElementById('img_icon').removeAttribute('hidden')
     }
 
     async function CreateCoach(event) {
@@ -190,7 +187,7 @@
             },
             didClose: () => {
                 if(!data.success) return
-                window.location = `coach_list.php`
+                window.location = `coach_list.php?id=${data['id']}`
             }
         })
     }
@@ -245,19 +242,6 @@
     }
 
     function CloseCertiModal() {
-        // let parents = [
-        //         document.querySelector('.modal_body'),
-        //         document.querySelector('.modal_monitor')
-        //     ];
-
-        // for(let parent of parents ) {
-        //     while (parent.firstChild) {
-        //         parent.removeChild(parent.firstChild);
-        //     }
-        // }
-        
-        // let certi_modal = document.getElementById('certi_modal');
-        // certi_modal.removeAttribute('data-sid');
         certi_modal.close();
     }
 

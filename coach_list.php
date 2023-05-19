@@ -17,6 +17,20 @@
     $stmt_all = $pdo->query($sql_all) ;
     $rows_all = $stmt_all->fetchAll() ;
 
+    $all_id = [] ;
+    foreach($rows_all as $row) {
+        $all_id[] = $row['sid'] ;
+    }
+
+    $redirect = isset($_GET['id']) ? 
+        ( in_array($_GET['id'], $all_id ) ? false : true )
+    : false ;
+
+    if($redirect) {
+        header('Location: coach_list.php') ;
+        exit ;
+    }
+
     $u_id = isset($_GET['id']) ? $_GET['id'] : '' ;
 
     $u_sql = isset($_GET['id']) ? 
@@ -147,7 +161,7 @@
                         <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>,'<?= $row['name'] ?>')">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
-                        <button class="me-2 btn btn-secondary" type="button" onclick="window.location='coach_score_chart.php'">教練評分
+                        <button class="me-2 btn btn-secondary" type="button" onclick="window.location='coach_score_chart.php?id=<?= $row['sid'] ?>&name=<?= $row['name'] ?>'">教練評分
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
                         <button class="ms-auto btn btn-dark" type="button" onclick="handleDelete(<?= $row['sid'] ?>)">
