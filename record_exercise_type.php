@@ -1,13 +1,14 @@
 <?php
+$pageName = 'record';
 include './parts/html-head.php';
 include './parts/html-navbar.php';
 include './parts/db-connect.php';
 
 $perPage = 5;
 $pagePerSide = 4; //pages pers side on the pagniation
-$pageName = 'record';
 $title = 'record_exercise_type';
 $data = 'record_exercise_type';
+$addApi = './api/record-exercise-type-add-api.php';
 ?>
 <link rel="stylesheet" href="./css/sean.css">
 
@@ -106,7 +107,9 @@ if ($tot_row) {
                                 <div class="sean_description sean_ellipsis"><?= $r['exercise_description'] ?></div>
                             </td>
                             <td>
-                                <div><?= $r['exercise_img'] ?>
+                                <div>
+                                    <!-- <?= $r['exercise_img'] ?> -->
+                                    <img class="imgBox" src="<?= $r['exercise_img'] ?>" alt="404">
                                 </div>
                             </td>
                             <td>
@@ -148,6 +151,54 @@ if ($tot_row) {
             </div>
         </div>
     </div>
+
+    <!-- start === add data === -->
+    <div><button type="button" class="add-btn btn btn-info mb-2 ms-2 border border-primary"><i class="fa-solid fa-plus"></i>Add</button></div>
+
+    <form name="addForm" id="addForm">
+        <div class="add-form display-toggle table-responsive ms-3 me-3">
+            <table class="table table-hover mb-0">
+
+                <tbody class="text-nowrap">
+                    <tr>
+                        <!-- INSERT INTO `record_exercise_type`(`sid`, `exercise_name`, `exercise_description`, `exercise_img`, `exercise_vid`, `status`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]') -->
+                        <td>
+                            <div class="">
+                                <label for="exercise_name" class="form-label">類型</label>
+                                <input type="text" class="form-control" name="exercise_name" id="exercise_name" placeholder="push up">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="exercise_description" class="form-label">敘述</label>
+                                <input type="text" class="form-control" name="exercise_description" id="exercise_description" placeholder="Just do it!">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="exercise_img" class="form-label">圖片路徑</label>
+                                <input type="text" class="form-control" name="exercise_img" id="exercise_img" placeholder="./imgs/exercise/abc.jpg">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                <label for="exercise_vid" class="form-label">影片路徑</label>
+                                <input type="text" class="form-control" name="exercise_vid" id="exercise_vid" placeholder="./vid/exercise/abc.jpg">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="col-12">
+                <button class="ms-3 formBtn btn btn-success" type="button" onclick="addData(event)" data-add-api="<?= $addApi ?>">Submit form</button>
+
+                <button class="ms-5 cancelBtn btn btn-danger" type="button">cancel</button>
+            </div>
+
+        </div>
+    </form>
+    <!-- end === add data === -->
+
 </div>
 <?php
 include './parts/html-navbar-end.php'; ?>

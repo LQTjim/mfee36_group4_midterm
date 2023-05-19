@@ -85,7 +85,7 @@ include './parts/html-navbar.php';
         //delete additional column through this btn
         form.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-col')) {
-                console.log(form.children.length)
+                // console.log(form.children.length)
                 e.target.closest(".p-2.col-6").remove();
                 if (form.children.length === 4) {
                     addFormBtn.classList.remove('d-none')
@@ -95,7 +95,20 @@ include './parts/html-navbar.php';
         //submit btn
         addBtn.addEventListener("click", () => {
             let validation = true
-            //check not null
+            document.querySelectorAll('input').forEach((el) => {
+                el.nextElementSibling.classList.remove('error');
+                el.nextElementSibling.innerText = ""
+            })
+
+            const reg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            const emailInputs = document.querySelectorAll('input[name="email[]"]')
+            emailInputs.forEach((el) => {
+                if (!reg.test(el.value)) {
+                    validation = false
+                    el.nextElementSibling.classList.add('error');
+                    el.nextElementSibling.innerText = "EMAIL格式錯誤"
+                }
+            }) //check not null
             document.querySelectorAll('input').forEach((el) => {
                 if (el.value.trim() === "") {
                     validation = false
@@ -106,9 +119,9 @@ include './parts/html-navbar.php';
             })
             if (validation) {
                 const fd = new FormData(form)
-                for (var pair of fd.entries()) {
-                    console.log(pair[0] + ', ' + pair[1]);
-                }
+                // for (var pair of fd.entries()) {
+                //     console.log(pair[0] + ', ' + pair[1]);
+                // }
                 fetch('./api/member-add-api.php', {
                         method: 'POST',
                         body: fd

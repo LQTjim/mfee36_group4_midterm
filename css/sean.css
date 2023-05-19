@@ -10,6 +10,17 @@
     text-overflow: ellipsis;
 }
 
-.add-form-toggle{
+.display-toggle{
     display: none;
+}
+
+.imgBox{
+    max-height: 100px;
+    max-width: 100px;
+    /* height: 200px; */
+}
+
+.chartBox{
+    max-width: 400px;
+    max-height: 300px;
 }

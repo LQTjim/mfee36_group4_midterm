@@ -27,29 +27,30 @@
     function EditData() {
         global $pdo, $output;
 
-        if(empty($_POST['data'])) quit() ;
+        if(empty($_POST['data']) && $_POST['type'] == 'introduction') quit() ;
 
         $sql_gate = [
-            'name' => " UPDATE `member` SET `{$_POST['type']}` = '{$_POST['data']}' 
+            'name' => " UPDATE `member` SET `{$_POST['type']}` = ? 
                         WHERE `sid` = ( SELECT `member_sid` FROM `c_l_coach` 
                         WHERE `sid` = {$_POST['sid']} ) ",
 
-            'nickname' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}' 
+            'nickname' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = ? 
                             WHERE `sid` = {$_POST['sid']} ",
                             
-            'date' => " UPDATE `c_l_coach` SET `created_at` = '{$_POST['data']}'
+            'date' => " UPDATE `c_l_coach` SET `created_at` = ?
                         WHERE `sid` = {$_POST['sid']} ",
 
-            'experience' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}'
+            'experience' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = ?
                               WHERE `sid` = {$_POST['sid']} ",
 
-            'introduction' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = '{$_POST['data']}'
-                              WHERE `sid` = {$_POST['sid']} ",
+            'introduction' => " UPDATE `c_l_coach` SET `{$_POST['type']}` = ?
+                                WHERE `sid` = {$_POST['sid']} ",
         ] ;
 
         $sql = $sql_gate[$_POST['type']] ;
 
-        $statment = $pdo->query($sql) ;
+        $statment = $pdo->prepare($sql) ;
+        $statment->execute([$_POST['data']]) ;
     
         $output['success'] = !! $statment->rowCount() ;
     

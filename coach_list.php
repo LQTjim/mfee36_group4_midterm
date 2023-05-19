@@ -17,6 +17,20 @@
     $stmt_all = $pdo->query($sql_all) ;
     $rows_all = $stmt_all->fetchAll() ;
 
+    $all_id = [] ;
+    foreach($rows_all as $row) {
+        $all_id[] = $row['sid'] ;
+    }
+
+    $redirect = isset($_GET['id']) ? 
+        ( in_array($_GET['id'], $all_id ) ? false : true )
+    : false ;
+
+    if($redirect) {
+        header('Location: coach_list.php') ;
+        exit ;
+    }
+
     $u_id = isset($_GET['id']) ? $_GET['id'] : '' ;
 
     $u_sql = isset($_GET['id']) ? 
@@ -75,7 +89,7 @@
                                 <?php $create_time = explode(' ',$row['created_at'])[0] ?>
                                 <span><?= explode(' ',$row['created_at'])[0] ?></span>
                                 <i class="fa-solid fa-pen-to-square ms-2"></i>
-                                <input type="date" style="visibility: hidden; position: absolute; left: -5rem;"
+                                <input type="date" style="visibility: hidden; position: absolute; left: -5rem;" max="<?= date('Y-m-d'); ?>"
                                 onchange="Edit({  
                                     'sid': <?= $row['sid'] ?>,
                                     'type': 'date',
@@ -93,7 +107,7 @@
                             <label for="" class="me-1 fw-bold">
                                 <?= $label == 'name' ? '姓名' : '暱稱' ?>:
                             </label>
-                            <button class="edit_button position-relative align-middle" type="button" onclick="
+                            <button class="edit_button position-relative" type="button" onclick="
                                 const inputEl = this.querySelector('input');
                                 const spanEl = this.querySelector('span');
                                 inputEl.classList.remove('hide');
@@ -104,9 +118,12 @@
                                     inputEl.value = '';
                                 }, {'once': true});
                             ">
-                                <span class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2"><?= $row[$label] ?></span>
+                                <span class="d-inline-block hide_text" style="width: 6rem;  line-height: 1.2; vertical-align: sub;"><?= $row[$label] ?></span>
                                 <input class="name_input hide" type="text" onkeyup="
                                     if(event.which !== 13) return; 
+                                    let label = '<?= $label ?>';
+                                    if(label == 'name' && this.value.length < 2)
+                                        return SwalAlert('姓名不能少於兩個字') ;
                                     Edit({  'sid': <?= $row['sid'] ?>,
                                             'type': '<?= $label ?>',
                                             'data': this.value
@@ -128,6 +145,9 @@
                         </div>
                         <input id="<?= $label ?>_<?= $row[$label] ?>" class="col-10 hide_text lh-base align-self-center border border-0" type="text" value="<?= $row[$label] ?>" onkeyup="
                             if(event.which !== 13) return; 
+                            let label = '<?= $label ?>';
+                            if(label == 'introduction' && this.value.length < 8)
+                                return SwalAlert('自我介紹不得少於8個字', true) ;
                             Edit({  'sid': <?= $row['sid'] ?>,
                                     'type': '<?= $label ?>',
                                     'data': this.value
@@ -138,13 +158,13 @@
                     </div>
                     <?php endforeach ; ?>
                     <div class="edit_field lh-lg d-flex mt-1 align-items-center">
-                        <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>)">編輯證照
+                        <button class="me-2 btn btn-primary" type="button" onclick="OpenCertiModal(<?= $row['sid'] ?>,'<?= $row['name'] ?>')">編輯證照
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
-                        <button class="me-2 btn btn-secondary" type="button">課程列表
+                        <button class="me-2 btn btn-secondary" type="button" onclick="window.location='coach_score_chart.php?id=<?= $row['sid'] ?>&name=<?= $row['name'] ?>'">教練評分
                             <i class="fa-solid fa-pen-to-square ms-1"></i>
                         </button>
-                        <button class="ms-auto btn btn-dark" type="button">
+                        <button class="ms-auto btn btn-dark" type="button" onclick="handleDelete(<?= $row['sid'] ?>)">
                             <span>刪除教練</span>
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
@@ -157,6 +177,14 @@
 </div>
 
 <dialog id="certi_modal">
+    <div class="fw-bold fs-5 mb-2">
+        <label class="me-2">教練編號:
+            <span id="coach_code" class="me-2"></span>
+        </label>
+        <label>姓名:
+            <span id="coach_name" class="me-2"></span>
+        </label>
+    </div>
     <label class="fw-bold" >證照列表 ( 點擊登錄 )</label>
     <div class="modal_monitor mb-2"></div>
     <label class="fw-bold" >已登錄證照 ( 點擊移除 )</label>
@@ -201,7 +229,6 @@
         }
 
         try {
-
             const response = await fetch("./api/c_l_handle_edit.php", {
                 method: "POST",
                 body: formdata,
@@ -220,7 +247,7 @@
                     timerProgressBar: 'c_l_progressBar'
                 },
                 didClose: () => {
-                    data.success && window.location.reload()
+                    window.location.reload()
                 }
             })
         } catch (err) {
@@ -228,7 +255,7 @@
         }
     }
 
-    async function OpenCertiModal(sid) {
+    async function OpenCertiModal(sid,name) {
 
         LoadingModal.fire()
 
@@ -247,6 +274,8 @@
         let body_frag = document.createDocumentFragment()
         let monitor = document.querySelector('.modal_monitor')
         let modalBody = document.querySelector('.modal_body')
+        modal.querySelector('#coach_code').textContent = sid
+        modal.querySelector('#coach_name').textContent = name
 
         for (let item of items['all']) {
             let div = document.createElement('div')
@@ -301,6 +330,59 @@
         let certi_modal = document.getElementById('certi_modal');
         certi_modal.removeAttribute('data-sid');
         certi_modal.close();
+    }
+
+    async function handleDelete(id) {
+        const confirm = await Swal.fire({
+            title: '確定刪除教練資料?',
+            text: '此動作無法回復',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: '確定刪除',
+            cancelButtonText: '取消',
+        })
+
+        if (!confirm.isConfirmed) return
+
+        LoadingModal.fire()
+
+        const response = await fetch(`./api/c_l_deleteCoach.php?id=${id}`)
+
+        const result = await response.json()
+
+        Swal.fire({
+            titleText: result.success ? '刪除成功' : '刪除發生錯誤',
+            icon: result.success ? 'success' : 'error',
+            showCancelButton: false,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'c_l_progressBar'
+            },
+            didClose: () => {
+                result.success && window.location.reload()
+            }
+        })
+
+    }
+
+    function SwalAlert(message, reload = false) {
+        Swal.fire({
+            titleText: message,
+            icon: 'warning',
+            showCancelButton: false,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+            customClass: {
+                timerProgressBar: 'c_l_progressBar'
+            },
+            didClose: () => {
+                reload && window.location.reload()
+            }
+        })
     }
 
 </script>

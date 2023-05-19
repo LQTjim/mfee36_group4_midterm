@@ -1,15 +1,18 @@
 <?php
+$pageName = 'record';
 include './parts/html-head.php';
 include './parts/html-navbar.php';
 include './parts/db-connect.php';
 
 $perPage = 5;
 $pagePerSide = 4; //pages pers side on the pagniation
-$pageName = 'record';
 $title = 'record_codition';
 $data = 'record_condition'; // name of the table
+$addApi = "./api/record-condition-add-api.php";
 ?>
 <link rel="stylesheet" href="./css/sean.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <?php
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // if no specify page, then go to first page
@@ -25,6 +28,7 @@ FROM `record_condition` rc
 JOIN `member` m ON rc.member_sid = m.sid AND m.active='1'";
 $tot_row =  $pdo->query($tot_sql)->fetch(PDO::FETCH_NUM)[0]; // total number of data
 $totPages = ceil($tot_row / $perPage);
+
 
 $rows = [];
 if ($tot_row) {
@@ -46,9 +50,36 @@ if ($tot_row) {
     $rows = $pdo->query($sql)->fetchAll();
 }
 
-// ========================================================
+// === bar chart ===
 
+$sql_barChart = sprintf("SELECT rc.member_sid, m.name,
+COUNT(rc.member_sid) AS freq
+FROM `record_condition` rc
+JOIN `member` m ON rc.member_sid = m.sid
+GROUP BY rc.member_sid
+ORDER BY freq DESC
+LIMIT 5;
+");
+
+$bar_rows = $pdo->query($sql_barChart)->fetchAll();
+
+$fID = [];
+$fData = [];
+
+foreach ($bar_rows as $b) {
+    // $fID[] = intval($b['member_sid']);
+    $fID[] = $b['name'];
+    $fData[] = intval($b['freq']);
+}
+// ========================================================
 ?>
+
+<div class="chartBox">
+    <canvas id="bar-chart" class=""></canvas>
+</div>
+
+<!-- end barchart =============================================== -->
+
 <div class="card shadow-sm">
     <div class="card-header bg-transparent">
         <div class="input-group">
@@ -99,6 +130,7 @@ if ($tot_row) {
                             <td class="ps-4">
                                 <input type="checkbox" class="form-check-input">
                             </td>
+                            <!-- ==================== -->
                             <td scope="row">
                                 <div><?= $r['sid'] ?></div>
                             </td>
@@ -123,10 +155,14 @@ if ($tot_row) {
                             <td>
                                 <div><?= $r['record_time'] ?></div>
                             </td>
+
+                            <!-- ==================== -->
                             <td class="pe-4">
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-sm btn-outline-dark">
-                                        編輯 </a>
+                                <div class="btnA btn-group">
+                                    <a href="./record_condition_edit.php?sid=<?= $r['sid'] ?>" class=" btn-edit btn btn-sm btn-outline-dark">
+                                        編輯
+                                    </a>
+
                                     <a href="#" class="btn btn-sm btn-outline-dark text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-order-id="<?= $r['sid'] ?>">刪除</a>
                                 </div>
                             </td>
@@ -161,7 +197,7 @@ if ($tot_row) {
     <div><button type="button" class="add-btn btn btn-info mb-2 ms-2 border border-primary"><i class="fa-solid fa-plus"></i>Add</button></div>
 
     <form name="addForm" id="addForm">
-        <div class="add-form add-form-toggle table-responsive ms-3 me-3">
+        <div class="add-form display-toggle table-responsive ms-3 me-3">
             <table class="table table-hover mb-0">
 
                 <tbody class="text-nowrap">
@@ -169,45 +205,84 @@ if ($tot_row) {
                         <td>
                             <div class="">
                                 <label for="memberSid" class="form-label">member ID</label>
-                                <input type="email" class="form-control" name="memberSid" id="memberSid" placeholder="999">
+                                <input type="text" class="form-control" name="memberSid" id="memberSid" placeholder="999">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">身高</label>
-                                <input type="email" class="form-control" name="height" id="height" placeholder="183">
+                                <label for="height" class="form-label">身高</label>
+                                <input type="text" class="form-control" name="height" id="height" placeholder="183">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">體重</label>
-                                <input type="email" class="form-control" name="weight" id="weight" placeholder="99">
+                                <label for="weight" class="form-label">體重</label>
+                                <input type="text" class="form-control" name="weight" id="weight" placeholder="99">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">體脂肪率</label>
-                                <input type="email" class="form-control" name="bodyfat" id="bodyfat" placeholder="5">
+                                <label for="bodyfat" class="form-label">體脂肪率</label>
+                                <input type="text" class="form-control" name="bodyfat" id="bodyfat" placeholder="5">
                             </div>
                         </td>
                         <td>
                             <div class="">
-                                <label for="memberSid" class="form-label">紀錄時間</label>
-                                <input type="email" class="form-control" name="record_time" id="record_time" placeholder="2020-01-01">
+                                <label for="record_time" class="form-label">紀錄時間</label>
+                                <input type="text" class="form-control" name="record_time" id="record_time" placeholder="2020-01-01">
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="col-12">
-                <button class="formBtn btn btn-primary" type="button" onclick="addData(event)" data-add-api="./api/record-condition-add-api.php">Submit form</button>
+                <button class="ms-3 formBtn btn btn-success" type="button" onclick="addData(event)" data-add-api="<?= $addApi ?>">Submit form</button>
+
+                <button class="ms-5 cancelBtn btn btn-danger" type="button">cancel</button>
             </div>
 
         </div>
     </form>
     <!-- end === add data === -->
-
 </div>
+
+<script>
+    const barCtx = document.querySelector("#bar-chart").getContext('2d');
+    const barConfig = {
+        type: 'bar',
+        data: {
+            datasets: [{
+                data: <?= json_encode($fData) ?>,
+                label: '活躍用戶'
+            }],
+            labels: <?= json_encode($fID) ?>
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, ticks) {
+                            return value;
+                        }
+                    }
+                },
+                // x: {
+                //     ticks: {
+                //         // Include a dollar sign in the ticks
+                //         callback: function(value, index, ticks) {
+                //             return value;
+                //         }
+                //     }
+                // }
+            }
+
+
+        }
+    };
+    const barChart = new Chart(barCtx, barConfig);
+</script>
 
 <?php
 include './parts/html-navbar-end.php'; ?>

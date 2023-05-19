@@ -15,6 +15,13 @@ if ($page < 1) {
     exit;
 }
 $query = isset($_GET['query']) ? $_GET['query'] : '';
+$sort = 'ORDER BY `m`.`sid` DESC';
+if (isset($_GET['sort'])) {
+    global $sort;
+    $sort = $_GET['sort'] == 'MASC' ? 'ORDER BY `m`.`sid` ASC' : $sort;
+    $sort = $_GET['sort'] == 'CASC' ? 'ORDER BY `m`.`birth` ASC' : $sort;
+    $sort = $_GET['sort'] == 'CDESC' ? 'ORDER BY `m`.`birth` DESC' : $sort;
+}
 $t_sql = "SELECT COUNT(1) FROM `member` WHERE `name` LIKE '%$query%'";
 $totalRows = $pdo->query($t_sql)->fetch(PDO::FETCH_NUM)[0]; # 總筆數
 $totalPages = ceil($totalRows / $perPage); # 總頁數
@@ -46,32 +53,36 @@ m.`created_at`,
 m.`active`
 FROM
 `member` m 
-JOIN `member_sex` ms ON m.sex_sid = ms.sid
-JOIN `member_level` ml ON m.`member_level_sid` = ml.sid
-JOIN `member_role` mr ON m.`role_sid` = mr.sid 
+LEFT JOIN `member_sex` ms ON m.sex_sid = ms.sid
+LEFT JOIN `member_level` ml ON m.`member_level_sid` = ml.sid
+LEFT JOIN `member_role` mr ON m.`role_sid` = mr.sid 
 WHERE m.name LIKE '%%%s%%'
-ORDER BY
-`m`.`sid` DESC LIMIT %s, %s", $query, ($page - 1) * $perPage, $perPage);
+%s LIMIT %s, %s", $query, $sort, ($page - 1) * $perPage, $perPage);
     $rows = $pdo->query($sql)->fetchAll();
 }
+$qStr = (isset($_GET['query']) ? '&query=' . $_GET['query'] : "");
+$sStr = (isset($_GET['sort']) ? '&sort=' . $_GET['sort'] : '');
+$qsStr = $qStr . $sStr;
+$rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
+
 ?>
 <link rel="stylesheet" href="./css/member.css">
 <div>
     <a href="index.php">首頁</a>
     >>
-    <a href="javascript: return;">會員列表</a>
+    <a href="member_list.php">會員列表</a>
 </div>
 <div class="card shadow-sm">
     <div class="card-footer bg-transparent py-3">
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-end mb-0">
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=1<?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=1<?= $qsStr ?>">
                         <i class="fa-solid fa-angles-left"></i>
                     </a>
                 </li>
                 <li class="page-item <?= 1 == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=<?= $page - 1 ?><?= $qsStr ?>">
                         <i class="fa-solid fa-angle-left"></i>
                     </a>
                 </li>
@@ -79,17 +90,17 @@ ORDER BY
                     if ($i >= 1 and $i <= $totalPages) :
                 ?>
                         <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>"><?= $i ?></a>
+                            <a class="page-link" href="?page=<?= $i ?><?= $qsStr ?>"><?= $i ?></a>
                         </li>
                 <?php endif;
                 endfor; ?>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=<?= $page + 1 ?><?= $qsStr ?>">
                         <i class="fa-solid fa-angle-right"></i>
                     </a>
                 </li>
                 <li class="page-item <?= $totalPages == $page ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $totalPages ?><?= isset($_GET['query']) ? '&query=' . $_GET['query'] : "" ?>">
+                    <a class="page-link" href="?page=<?= $totalPages ?><?= $qsStr ?>">
                         <i class="fa-solid fa-angles-right"></i>
                     </a>
                 </li>
@@ -101,12 +112,13 @@ ORDER BY
         <div class="input-group">
             <div class="dropdown">
                 <button class="btn btn-outline-dark dropdown-toggle btn-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    依姓名
+                    選擇排序
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">依姓名</a></li>
-                    <li><a class="dropdown-item" href="#">依生日</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?>&sort=MASC<?= $qStr ?>">依編號小至大</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?><?= $qStr ?>">依編號大至小</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?>&sort=CASC<?= $qStr ?>">依生日大至小</a></li>
+                    <li><a class="dropdown-item" href="member_list.php?page=<?= $page ?>&sort=CDESC<?= $qStr ?>">依生日小至大</a></li>
                 </ul>
             </div>
             <span class="input-group-text border-0 bg-transparent pe-0">
@@ -126,7 +138,7 @@ ORDER BY
                         <th scope="col" class="py-3 ">會員編號</th>
                         <th scope="col">Email</th>
                         <th scope="col">姓名</th>
-                        <th scope="col">生日</th>
+                        <th scope="col align-center">生日</th>
                         <th scope="col  ">地址</th>
                         <th scope="col">性別</th>
                         <th scope="col">會員等級</th>
@@ -191,6 +203,7 @@ ORDER BY
             </table>
         </div>
         <button class="btn btn-danger m-1" id="deleteSelected">刪除選取項目</button>
+        <button class="btn btn-info m-1" id="csvSelected">匯出選取項目</button>
     </div>
     <div class="card-footer bg-transparent py-3">
         <nav aria-label="Page navigation example">
@@ -317,6 +330,7 @@ ORDER BY
             </div>
         </div>
     </div>
+    <form style="position:absolute;left: -1000000px;" id="hidden-form" method="POST" action="./api/member-list-csv-api.php"><input type="submit" id="hInput"></form>
     <script>
         (function() {
             const search = document.querySelector('input[type=search]')
@@ -324,6 +338,9 @@ ORDER BY
             const tdCheckAll = document.querySelector('[data-checkAll]')
             const tdCheck = document.querySelectorAll('[data-check]')
             const deleteSelected = document.querySelector('#deleteSelected')
+            const csvSelected = document.querySelector('#csvSelected')
+            const hiddenForm = document.querySelector('#hidden-form')
+            const hInput = document.querySelector('#hInput')
             let listBoolean = []
             search.addEventListener('change', (e) => {
                 location.href = `./member_list.php?query=${e.target.value}`
@@ -377,7 +394,6 @@ ORDER BY
             deleteBtn.addEventListener('click', () => {
                 const fd = new FormData();
                 fd.append("sid", modalByDelete.dataset['sid'])
-
                 fetch('./api/member-list-delete-api.php', {
                     method: 'POST',
                     body: fd
@@ -391,7 +407,7 @@ ORDER BY
                                 showConfirmButton: false
                             })
                             setTimeout(() => {
-                                location.href = `/mfee36_group4_midterm/member_list.php?page=<?= $page ?>`
+                                location.href = `<?= $rHref ?>`
                             }, 1500)
                         }
 
@@ -414,8 +430,50 @@ ORDER BY
             //     })
             // })
             deleteSelected.addEventListener('click', () => {
-                const deleteSelectedSid = [];
-                Array.from(tdCheck.querySelector(''));
+                const selectedSids = document.querySelectorAll('input:checked[data-check]')
+                if (selectedSids.length > 0) {
+                    const fd = new FormData()
+                    selectedSids.forEach((el, i) => {
+                        fd.append('deleteSids[]', el.dataset['check'])
+                    });
+                    fetch('./api/member-list-delete-select-api.php', {
+                        method: 'POST',
+                        body: fd
+                    }).then((r) => r.json()).then((data) => {
+                        if (data.success) {
+                            Swal.fire({
+                                text: '刪除成功',
+                                icon: 'success',
+                                showCancelButton: false,
+                                showConfirmButton: false
+                            })
+                            setTimeout(() => {
+                                location.href = `<?= $rHref ?>`
+                            }, 1500)
+                        }
+
+                    }).catch((err) => {
+                        Swal.fire({
+                            text: '刪除失敗，請聯絡工程師',
+                            icon: 'error',
+                            showCancelButton: false,
+                            showConfirmButton: false
+                        })
+                    })
+                }
+            })
+            csvSelected.addEventListener('click', () => {
+                const selectedSids = document.querySelectorAll('input:checked[data-check]')
+                if (selectedSids.length > 0) {
+                    selectedSids.forEach((el, i) => {
+                        const input = document.createElement('input')
+                        hiddenForm.appendChild(input)
+                        input.setAttribute('name', 'csvSids[]')
+                        input.value = el.dataset['check']
+                    });
+
+                    hInput.click()
+                }
             })
         })()
     </script>
