@@ -1,7 +1,4 @@
 <?php
-
-use function PHPSTORM_META\type;
-
 include '../parts/db-connect.php'; ?>
 <?php
 $output = [
@@ -11,22 +8,26 @@ $output = [
     'error' => [],
 ];
 
-
 if (!empty($_POST['member_sid'])) {
     $isPass = true;
+
     $member_sid = trim($_POST['member_sid']);
     $member_sid = filter_var($member_sid, FILTER_VALIDATE_INT);
     $products_type_sid = trim($_POST['products_type_sid']);
     $products_type_sid = filter_var($products_type_sid, FILTER_VALIDATE_INT);
     $item_sid = trim($_POST['item_sid']);
     $item_sid = filter_var($item_sid, FILTER_VALIDATE_INT);
+    $output["test"] = $member_sid;
     if (empty($member_sid) || empty($products_type_sid) || empty($item_sid)) {
-        $isPass = false;
+        // $isPass = false;
         $output['error']['member_sid'] = '格式有誤';
         $output['error']['products_type_sid'] = '格式有誤';
         $output['error']['item_sid'] = '格式有誤';
         exit;
     };
+
+
+
 
     $sql_input = "INSERT INTO `order_cart`
 (`member_sid`, 
@@ -72,12 +73,12 @@ NOW())"; //表格製作時間created_at，以後改為now()
         $quantity = intval($_POST['quantity']);
     }
 
+
     if ($isPass) {
         $stmt_input->execute([
             $_POST['member_sid'], //member_sid;
             // $_POST['products_type_sid'],
             $type,
-
             // $_POST['item_sid'],
             $_POST['item_sid'],
             $_POST['price'],
@@ -86,7 +87,13 @@ NOW())"; //表格製作時間created_at，以後改為now()
         ]);
     }
     $output['success'] = !!$stmt_input->rowCount();
-}
-header("Content-Type: application/json");
-echo json_encode($output, JSON_UNESCAPED_UNICODE)
+};
+
+function quit()
+{
+    global $output;
+    header("Content-Type: application/json");
+    echo json_encode($output, JSON_UNESCAPED_UNICODE);
+};
+
 ?>
