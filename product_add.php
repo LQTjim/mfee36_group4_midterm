@@ -77,7 +77,7 @@ include './parts/html-navbar-end.php'; ?>
             for (var pair of fd.entries()) {
                 console.log(pair[0] + ', ' + pair[1]);
             }
-            fetch('product_add-api.php', {
+            fetch('./api/product_add-api.php', {
                     method: 'POST',
                     body: fd, // Content-Type 省略, multipart/form-data
                 }).then(r => r.json())

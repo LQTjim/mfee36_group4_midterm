@@ -1,5 +1,5 @@
 <?php
-require './parts/db-connect.php';
+require '../parts/db-connect.php';
 
 $output = [
     'success' => false,
@@ -28,6 +28,7 @@ if (!empty($_POST['name']) and !empty($_POST['sid'])) {
             $_POST['description'],
             $_POST['sid'],
         ]);
+
         $output['success'] = !!$stmt->rowCount();
     }
 }

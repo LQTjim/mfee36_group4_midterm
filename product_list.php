@@ -22,9 +22,27 @@ if ($totalRows) {
         exit;
     }
 }
-$sql = sprintf("SELECT p.*, pc.`categories_name` FROM `product_name` p 
-JOIN product_categories as pc 
-ON p.category_id=pc.sid ORDER BY p.`sid`  LIMIT %s, %s ", ($page - 1) * $perPage, $perPage);
+// $sql = sprintf("SELECT p.*, pc.`categories_name` FROM `product_name` p 
+// JOIN product_categories as pc 
+// ON p.category_id=pc.sid ORDER BY p.`sid`  LIMIT %s, %s ", ($page - 1) * $perPage, $perPage);
+// $rows = $pdo->query($sql)->fetchAll();
+
+if (isset($_GET['product_name']) && $_GET['product_name'] !== "") {
+    $membername = $_GET['product_name'];
+
+    $sql = "SELECT * FROM `product_name` as p 
+    JOIN product_categories  as pc
+    ON p.category_id=pc.sid WHERE product_name like '%$membername%' ORDER BY p.`sid`";
+    $ssql2 = "SELECT COUNT(1) FROM product_name WHERE `product_name` like '%$membername%'";
+
+    // $Srows = $pdo->query($ssql)->fetchAll();
+    $Srows2 = $pdo->query($ssql2)->fetch(PDO::FETCH_NUM)[0];
+} else {
+
+    $sql = sprintf("SELECT p.*, pc.`categories_name` FROM `product_name` p 
+    JOIN product_categories as pc 
+    ON p.category_id=pc.sid ORDER BY p.`sid`  LIMIT %s, %s ", ($page - 1) * $perPage, $perPage);
+}
 $rows = $pdo->query($sql)->fetchAll();
 // $sql_categories = "
 // SELECT
@@ -73,7 +91,10 @@ $rows = $pdo->query($sql)->fetchAll();
                 </a>
             </li>
         </ul>
-
+        <div class="input-group mb-3 ">
+            <input type="text" class="search_byname" id="search_byname" placeholder="請輸入商品名" aria-describedby="button-addon2" value="<?= isset($_GET['product_name']) ? $_GET['product_name'] : "" ?>">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">搜尋</button>
+        </div>
 
     </nav>
 </div>
@@ -120,5 +141,12 @@ $rows = $pdo->query($sql)->fetchAll();
             }
 
         }
+
+        let search_byname = document.querySelector('#search_byname');
+        search_byname.addEventListener('change', () => {
+            let name_value = search_byname.value;
+            console.log(name_value);
+            location.href = "product_list.php?product_name=" + name_value;
+        })
     </script>
     <?php include './parts/html-footer.php' ?>

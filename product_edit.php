@@ -98,7 +98,7 @@ if (empty($r)) {
             //     console.log(pair[0] + ', ' + pair[1]);
             // }
 
-            fetch('product_edit-api.php', {
+            fetch('./api/product_edit-api.php', {
 
                     method: 'POST',
                     body: fd, // Content-Type 省略, multipart/form-data
@@ -120,6 +120,7 @@ if (empty($r)) {
                     }
                     setTimeout(() => {
                         infoBar.style.display = 'none';
+                        window.location.replace('product_list.php');
                     }, 2000);
                 })
                 .catch(ex => {
