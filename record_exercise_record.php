@@ -74,7 +74,7 @@ foreach ($bar_rows as $b) {
 }
 // ========================================================
 ?>
-<div class="">
+<div class="chartBox">
     <canvas id="bar-chart" class=""></canvas>
 </div>
 

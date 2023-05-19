@@ -31,7 +31,7 @@ include './parts/admin-required.php';
             <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
-        <div class="collapse" id="menu-member" role="button">
+        <div class="collapse <?= $pageName === 'member' ? 'show' : '' ?>" id="menu-member" role="button">
           <a href="./member_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link <?= $subPageName === 'member_list' ? 'active' : '' ?>">
             會員列表
           </a>
@@ -53,7 +53,7 @@ include './parts/admin-required.php';
             <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
-        <div class="collapse" id="menu-record" role="button">
+        <div class="collapse <?= $pageName === 'record' ? 'show' : '' ?>" id="menu-record" role="button">
           <a href="./record_condition.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             體態紀錄
           </a>
@@ -81,7 +81,7 @@ include './parts/admin-required.php';
             <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
-        <div class="collapse" id="coach-lession" role="button">
+        <div class="collapse <?= in_array($pageName, $c_l_pages) ? 'show' : '' ?>" id="coach-lession" role="button">
           <a href="./coach_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             教練列表
           </a>
@@ -99,7 +99,7 @@ include './parts/admin-required.php';
             <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
-        <div class="collapse" id="menu-product" role="button">
+        <div class="collapse <?= $pageName === 'product' ? 'show' : '' ?>" id="menu-product" role="button">
           <a href="./product_list.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             商品列表
           </a>
@@ -119,7 +119,7 @@ include './parts/admin-required.php';
             <i class="fa-solid fa-caret-down"></i>
           </div>
         </a>
-        <div class="collapse" id="order_cart" role="button">
+        <div class="collapse <?= $pageName === 'Cart' ? 'show' : '' ?>" id="order_cart" role="button">
           <a href="./order_cart.php" class="d-block ps-5 text-dark text-decoration-none sidebar-link">
             購物車
           </a>
