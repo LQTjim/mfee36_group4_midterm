@@ -203,6 +203,7 @@ $rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
             </table>
         </div>
         <button class="btn btn-danger m-1" id="deleteSelected">刪除選取項目</button>
+        <button class="btn btn-info m-1" id="csvSelected">匯出選取項目</button>
     </div>
     <div class="card-footer bg-transparent py-3">
         <nav aria-label="Page navigation example">
@@ -329,6 +330,7 @@ $rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
             </div>
         </div>
     </div>
+    <form style="position:absolute;left: -1000000px;" id="hidden-form" method="POST" action="./api/member-list-csv-api.php"><input type="submit" id="hInput"></form>
     <script>
         (function() {
             const search = document.querySelector('input[type=search]')
@@ -336,6 +338,9 @@ $rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
             const tdCheckAll = document.querySelector('[data-checkAll]')
             const tdCheck = document.querySelectorAll('[data-check]')
             const deleteSelected = document.querySelector('#deleteSelected')
+            const csvSelected = document.querySelector('#csvSelected')
+            const hiddenForm = document.querySelector('#hidden-form')
+            const hInput = document.querySelector('#hInput')
             let listBoolean = []
             search.addEventListener('change', (e) => {
                 location.href = `./member_list.php?query=${e.target.value}`
@@ -389,7 +394,6 @@ $rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
             deleteBtn.addEventListener('click', () => {
                 const fd = new FormData();
                 fd.append("sid", modalByDelete.dataset['sid'])
-
                 fetch('./api/member-list-delete-api.php', {
                     method: 'POST',
                     body: fd
@@ -456,6 +460,19 @@ $rHref = "/mfee36_group4_midterm/member_list.php?page=$page $qsStr";
                             showConfirmButton: false
                         })
                     })
+                }
+            })
+            csvSelected.addEventListener('click', () => {
+                const selectedSids = document.querySelectorAll('input:checked[data-check]')
+                if (selectedSids.length > 0) {
+                    selectedSids.forEach((el, i) => {
+                        const input = document.createElement('input')
+                        hiddenForm.appendChild(input)
+                        input.setAttribute('name', 'csvSids[]')
+                        input.value = el.dataset['check']
+                    });
+
+                    hInput.click()
                 }
             })
         })()
